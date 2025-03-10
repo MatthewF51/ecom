@@ -1,63 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speedy Sales - Home</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speedy Sales</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
 </head>
 <body>
-    <header>
-        <h1>Speedy Sales</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#cars">Cars</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <section id="home" class="hero">
-        <h2>Find Your Dream Car</h2>
-        <p>Explore our collection of high-quality cars at unbeatable prices.</p>
-        <a href="#cars" class="btn">Browse Cars</a>
-    </section>
-    
-    <section id="cars" class="car-listing">
-        <h2>Featured Cars</h2>
-        <div class="car-grid" id="car-container">
-            <!-- Cars will be dynamically loaded here -->
+  <header class="navbar">
+    <h1>Speedy Cars</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Cars</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h2>Find Your Perfect Car</h2>
+      <p>No car knowledge? No problem! We make it easy.</p>
+      <button class="cta-button">Browse Cars</button>
+    </div>
+  </section>
+
+  <section class="featured-cars">
+    <h3>Featured Cars</h3>
+    <div class="car-grid">
+      <div class="car-card" data-aos="fade-up">
+        <img src="car1.jpg" alt="Car 1" />
+        <div class="car-info">
+          <h4>2023 Eco Cruiser</h4>
+          <p>Simple, reliable, and efficient.</p>
+          <button>View More</button>
         </div>
-    </section>
-    
-    <section id="about">
-        <h2>About Us</h2>
-        <p>Speedy Sales is your go-to platform for high-quality, affordable cars. Our mission is to provide an easy and reliable way to purchase your next vehicle.</p>
-    </section>
-    
-    <section id="contact">
-        <h2>Contact Us</h2>
-        <p>Email: contact@speedysales.com</p>
-        <p>Phone: +123456789</p>
-        <form>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
-            
-            <button type="submit">Send Message</button>
-        </form>
-    </section>
-    
-    <footer>
-        <p>&copy; 2025 Speedy Sales. All Rights Reserved.</p>
-    </footer>
+      </div>
+      <!-- Repeat cards... -->
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Speedy Sales. All rights reserved.</p>
+  </footer>
+  
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+	AOS.init();
+  </script>
+
 </body>
 </html>
