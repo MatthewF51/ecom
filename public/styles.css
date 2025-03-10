@@ -1,114 +1,137 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-    color: #333;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  background: #111;
+  line-height: 1.6;
 }
 
-header {
-    background: #222;
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-}
-
-nav ul li {
-    margin: 0 15px;
-}
-
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-.hero {
-    text-align: center;
-    padding: 50px 20px;
-    background: #007bff;
-    color: white;
-}
-
-.hero .btn {
-    display: inline-block;
-    background: white;
-    color: #007bff;
-    padding: 10px 20px;
-    text-decoration: none;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.car-listing {
-    padding: 50px;
-    text-align: center;
-}
-
-.car-grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.car-item {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 250px;
-    text-align: center;
-}
-
-.car-item img {
-    width: 100%;
-    border-radius: 8px;
+a {
+  color: #fff;
+  text-decoration: none;
 }
 
 button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
+  background-color: #ff6600;
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background: #0056b3;
+  background-color: #e65c00;
 }
 
-#contact form {
-    display: flex;
-    flex-direction: column;
-    max-width: 400px;
-    margin: auto;
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-#contact form label {
-    margin-top: 10px;
+.navbar nav a {
+  margin-left: 1.5rem;
+  font-weight: 500;
 }
 
-#contact form input, #contact form textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 5px;
+/* Hero Section */
+.hero {
+  height: 90vh;
+  background: url('car-bg.jpg') no-repeat center center/cover;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+}
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  padding: 2rem 3rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.hero-content h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+/* Featured Cars */
+.featured-cars {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.featured-cars h3 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.car-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.car-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.car-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.car-info {
+  padding: 1.5rem;
 }
 
 footer {
-    background: #222;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    margin-top: 20px;
+  text-align: center;
+  padding: 2rem 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  margin-top: 2rem;
 }
