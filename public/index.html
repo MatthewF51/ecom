@@ -7,14 +7,13 @@
   <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
 </head>
 <body>
   <header class="navbar">
     <h1>Speedy Cars</h1>
     <nav>
-      <a href="#">Home</a>
-      <a href="#">Cars</a>
+      <a href="index.html">Home</a>
+      <a href="cars.html">Cars</a>
       <a href="#">About</a>
       <a href="#">Contact</a>
     </nav>
@@ -24,7 +23,7 @@
     <div class="hero-content">
       <h2>Find Your Perfect Car</h2>
       <p>No car knowledge? No problem! We make it easy.</p>
-      <button class="cta-button">Browse Cars</button>
+      <button class="cta-button" onclick="window.location.href='cars.html'">Browse Cars</button>
     </div>
   </section>
 
@@ -36,10 +35,10 @@
         <div class="car-info">
           <h4>2023 Eco Cruiser</h4>
           <p>Simple, reliable, and efficient.</p>
-          <button>View More</button>
+          <button onclick="window.location.href='cars.html'">View More</button>
         </div>
       </div>
-      <!-- Repeat cards... -->
+      <!-- You can add more static car cards if desired -->
     </div>
   </section>
 
@@ -49,8 +48,7 @@
   
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-	AOS.init();
+    AOS.init();
   </script>
-
 </body>
 </html>
