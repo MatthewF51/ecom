@@ -322,3 +322,140 @@ footer {
   list-style: disc;
   margin-left: 1.5rem;
 }
+
+/* --- About Page Styling --- */
+.about-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.about-page h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.about-page p {
+  text-align: center;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* Sales team section */
+.about-page h3 {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 2rem;
+}
+
+.salespeople {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+}
+
+.salesperson {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  text-align: center;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.salesperson:hover {
+  transform: scale(1.03);
+}
+
+.salesperson img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.salesperson h4 {
+  margin: 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.salesperson p {
+  margin: 0;
+  font-size: 1rem;
+  color: #ccc;
+}
+
+/* --- Contact Page Styling --- */
+.contact-page {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.contact-page h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+}
+
+.contact-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-page form div {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-page label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.contact-page input,
+.contact-page textarea {
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.contact-page input:focus,
+.contact-page textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #ff6600;
+}
+
+.contact-page button {
+  align-self: center;
+  padding: 0.8rem 2rem;
+  background-color: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contact-page button:hover {
+  background-color: #e65c00;
+}
+
+#formResponse {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #fff;
+}
