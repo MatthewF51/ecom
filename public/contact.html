@@ -50,5 +50,19 @@
       this.reset();
     });
   </script>
+  <!-- Within contact.html, before the closing </body> tag -->
+   
+  <script>
+    fetch('/api/user')
+      .then(response => response.json())
+      .then(data => {
+        if (data.name && data.email) {
+          document.getElementById('name').value = data.name;
+          document.getElementById('email').value = data.email;
+        }
+      })
+      .catch(err => console.error(err));
+  </script>
+  
 </body>
 </html>
