@@ -9,15 +9,18 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
-  <header class="navbar">
-    <h1>Speedy Cars</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="cars.html">Cars</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-  </header>
+    <header class="navbar">
+        <h1>Speedy Cars</h1>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="cars.html">Cars</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="login.html">Login</a>
+          <a href="signup.html">Signup</a>
+        </nav>
+      </header>
+      
   
   <div class="details-container">
     <div class="car-header">
@@ -25,22 +28,30 @@
     </div>
     <div class="car-images-container">
       <div class="car-main-image" id="carImages">
-        <!-- Main image will be injected here -->
+        <!-- Main image injected here -->
       </div>
       <div id="additionalImagesCarousel" class="carousel-container">
         <button class="prev" id="prevBtn">&#10094;</button>
         <div class="carousel-images" id="carouselImages">
-          <!-- Additional images will be injected here -->
+          <!-- Additional images injected here -->
         </div>
         <button class="next" id="nextBtn">&#10095;</button>
       </div>
     </div>
     <div class="car-specs" id="carSpecs">
       <p id="carDescription"></p>
+      <h3>Price:</h3>
+      <p id="carPrice"></p>
+      <h3>Technical Specifications:</h3>
+      <ul id="carTechSpecs">
+        <!-- Technical specs injected here -->
+      </ul>
       <h3>Attributes:</h3>
       <ul id="carAttributes">
-        <!-- Attributes will be populated here -->
+        <!-- Attributes injected here -->
       </ul>
+      <!-- Buy Now button inserted below if available -->
+      <div id="buySection"></div>
     </div>
   </div>
   
@@ -58,7 +69,6 @@
       return urlParams.get(param);
     }
 
-
     async function loadCarDetails() {
       const carId = getQueryParam('id');
       if (!carId) {
@@ -75,14 +85,26 @@
         const car = await response.json();
         
         // Set basic details
-        // Set basic details
         document.getElementById('carName').textContent = car.name;
         document.getElementById('carDescription').textContent = car.description;
+        document.getElementById('carPrice').textContent = car.price ? "$" + car.price : "N/A";
+        
+        // Display technical specs (if stored as an ordered array)
+        const techSpecsContainer = document.getElementById('carTechSpecs');
+        if (car.technical_specs && Array.isArray(car.technical_specs)) {
+          const specLabels = ["Drivetrain", "Number of Seats", "Horsepower", "Estimated Range"];
+          car.technical_specs.forEach((spec, index) => {
+            const li = document.createElement('li');
+            li.textContent = specLabels[index] + ": " + spec;
+            techSpecsContainer.appendChild(li);
+          });
+        } else {
+          techSpecsContainer.innerHTML = '<li>No technical specifications provided.</li>';
+        }
         
         // Display the main image
         const carImagesContainer = document.getElementById('carImages');
         const mainImage = document.createElement('img');
-        mainImage.src = car.image_url ? "images/" + car.image_url : "images/default-car.jpg";
         mainImage.src = car.image_url ? "images/" + car.image_url : "images/default-car.jpg";
         mainImage.alt = car.name;
         carImagesContainer.appendChild(mainImage);
@@ -130,6 +152,18 @@
           });
         } else {
           attributesList.innerHTML = '<li>No attributes provided.</li>';
+        }
+        
+        // Conditionally add Buy Now button if car is available
+        const buySection = document.getElementById('buySection');
+        if (car.available) {
+          const buyBtn = document.createElement('button');
+          buyBtn.textContent = "Buy Now";
+          // Redirect to sales page with the car ID as a query parameter
+          buyBtn.onclick = () => window.location.href = `sales.html?id=${car.id}`;
+          buySection.appendChild(buyBtn);
+        } else {
+          buySection.innerHTML = '<p>This car is currently unavailable for purchase.</p>';
         }
         
       } catch (error) {
