@@ -152,7 +152,7 @@
         
         // Conditionally add Buy Now button if car is available
         const buySection = document.getElementById('buySection');
-        if (car.available == "t") {
+        if (car.available) {
           const buyBtn = document.createElement('button');
           buyBtn.textContent = "Buy Now";
           // Redirect to sales page with the car ID as a query parameter
