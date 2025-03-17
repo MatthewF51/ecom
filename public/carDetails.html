@@ -58,6 +58,7 @@
       return urlParams.get(param);
     }
 
+
     async function loadCarDetails() {
       const carId = getQueryParam('id');
       if (!carId) {
@@ -74,12 +75,14 @@
         const car = await response.json();
         
         // Set basic details
+        // Set basic details
         document.getElementById('carName').textContent = car.name;
         document.getElementById('carDescription').textContent = car.description;
         
         // Display the main image
         const carImagesContainer = document.getElementById('carImages');
         const mainImage = document.createElement('img');
+        mainImage.src = car.image_url ? "images/" + car.image_url : "images/default-car.jpg";
         mainImage.src = car.image_url ? "images/" + car.image_url : "images/default-car.jpg";
         mainImage.alt = car.name;
         carImagesContainer.appendChild(mainImage);

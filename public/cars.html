@@ -51,15 +51,13 @@
           card.setAttribute('data-aos', 'fade-up');
           
           card.innerHTML = `
-            <img src="${'images/' + car.image_url || 'default-car.jpg'}" alt="${car.name}" />
+            <img src="${ car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg' }" alt="${car.name}" />
             <div class="car-info">
               <h4>${car.name}</h4>
               <p>${car.description}</p>
               <button onclick="window.location.href='carDetails.html?id=${car.id}'">View Details</button>
             </div>
           `;
-
-          
           container.appendChild(card);
         });
       } catch (error) {
