@@ -30,7 +30,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Grab the form element
-const form = document.getElementById('carForm');
+//const form = document.getElementById('carForm');
 
 // Add a submit event listener
 form.addEventListener('submit', (event) => {
