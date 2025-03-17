@@ -22,7 +22,7 @@
   </header>
   
   <section class="page-container">
-	  <form class="form-container">
+	  <form id="searchForm" class="form-container">
     <h2>Find Your Car</h2>
 
     <!-- Car Type Section -->
@@ -63,7 +63,7 @@
     </div>
 
     <!-- Submit Button -->
-    <button type="submit" class="submit-btn">Search Cars</button>
+    <button type="submit" class="submit-btn" onsubmit="loadCars()">Search Cars</button>
   </form>
   </section>
 
@@ -91,15 +91,54 @@
     // Initialize display on load
     updateValue(rangeInput.value);
 
-    // Optional: listen for change events as well
+    // Listen for change events
     rangeInput.addEventListener('change', () => updateValue(rangeInput.value));
   
     AOS.init();
-
-    async function loadCars() {
-      try {
-        const response = await fetch('/api/cars');
+	
+	async initialCars() {
+		const response = await fetch(`/api/cars`);
         const cars = await response.json();
+		loadCars(cars);
+	}
+	
+	async function findCars() {
+	    // Get the form element
+		const form = document.getElementById('searchForm');
+
+		// Add event listener for form submission
+		form.addEventListener('submit', (event) => {
+			event.preventDefault(); // Prevent the page from reloading
+
+		// Grab the input values
+		const selectedCarTypes = Array.from(
+		  document.querySelectorAll('input[name="car_type"]:checked')
+		).map(cb => cb.value);
+		
+		const selectedAttributes = Array.from(
+		  document.querySelectorAll('input[name="car_attribute"]:checked')
+		).map(cb => cb.value);
+		
+		const selectedPrice = document.getElementById('price').value;
+		
+		let types = '';
+		
+		selectedCarTypes.forEach((type) => {
+		  types += "cartype = '" + type + "' OR ";
+		});
+		
+		types = types.slice(0, -4); // Removes last 4 characters
+		
+		const query = "SELECT * FROM cars WHERE attributes @> ARRAY['" + atts +"'] AND " + types + " AND price = " + selectedPrice;
+		const params = new URLSearchParams(query);
+		const response = await fetch(`/api/cars/query?${params.toString()}`);
+        const cars = await response.json();
+		
+		loadCars(cars);
+	}
+
+    async function loadCars(cars) {
+      try {
         const container = document.getElementById('carsContainer');
         
         if (cars.length === 0) {
@@ -127,7 +166,7 @@
       }
     }
     
-    window.addEventListener('DOMContentLoaded', loadCars);
+    window.addEventListener('DOMContentLoaded', initialCars);
   </script>
 </body>
 </html>
