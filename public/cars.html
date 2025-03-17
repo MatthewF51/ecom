@@ -21,6 +21,51 @@
     </nav>
   </header>
   
+  <section class="page-container">
+	  <form class="form-container">
+    <h2>Find Your Car</h2>
+
+    <!-- Car Type Section -->
+    <div class="section">
+      <label>Select Car Type:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="SUV" name="car_type" value="SUV">SUV</label>
+        <label><input type="checkbox" id="Hatchback" name="car_type" value="Hatchback">Hatchback</label>
+        <label><input type="checkbox" id="Saloon" name="car_type" value="Saloon">Saloon</label>
+        <label><input type="checkbox" id="Coupe" name="car_type" value="Coupe">Coupe</label>
+        <label><input type="checkbox" id="Supercar" name="car_type" value="Supercar">Supercar</label>
+        <label><input type="checkbox" id="AnyCarType" name="car_type" value="Any">Any</label>
+      </div>
+    </div>
+
+    <!-- Attribute Section -->
+    <div class="section">
+      <label>Select Attributes:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="Fast" name="car_attribute" value="Fast">Fast</label>
+        <label><input type="checkbox" id="Luxurious" name="car_attribute" value="Luxurious">Luxurious</label>
+        <label><input type="checkbox" id="TwoDoor" name="car_attribute" value="two-door">2-Door</label>
+        <label><input type="checkbox" id="FourDoor" name="car_attribute" value="four-door">4-Door</label>
+        <label><input type="checkbox" id="TwoSeater" name="car_attribute" value="two-seater">2-Seater</label>
+        <label><input type="checkbox" id="FiveSeater" name="car_attribute" value="five-seater">5-Seater</label>
+        <label><input type="checkbox" id="SevenSeater" name="car_attribute" value="seven-seater">7-Seater</label>
+        <label><input type="checkbox" id="AnyAttribute" name="car_attribute" value="Any">Any</label>
+      </div>
+    </div>
+
+    <!-- Price Section -->
+    <div class="section">
+      <label>Maximum Price:</label>
+      <div class="range-container">
+        <input type="range" id="price" name="price" min="30000" max="3000000" value="30000" oninput="updateValue(this.value)">
+        <div id="rangeValue">$30,000</div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="submit-btn">Search Cars</button>
+  </form>
+  </section>
 
   <section class="cars-page">
     <h2>Our Cars</h2>
@@ -35,6 +80,20 @@
   
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
+   const rangeInput = document.getElementById('price');
+    const rangeValue = document.getElementById('rangeValue');
+
+    function updateValue(val) {
+      // Format the number as currency
+      rangeValue.textContent = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(val);
+    }
+
+    // Initialize display on load
+    updateValue(rangeInput.value);
+
+    // Optional: listen for change events as well
+    rangeInput.addEventListener('change', () => updateValue(rangeInput.value));
+  
     AOS.init();
 
     async function loadCars() {
