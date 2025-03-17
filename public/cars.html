@@ -55,9 +55,10 @@
             <div class="car-info">
               <h4>${car.name}</h4>
               <p>${car.description}</p>
-              <button onclick="alert('Car details not implemented yet')">View Details</button>
+              <button onclick="window.location.href='carDetails.html?id=${car.id}'">View Details</button>
             </div>
           `;
+
           
           container.appendChild(card);
         });
