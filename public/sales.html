@@ -7,33 +7,69 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <header class="navbar">
-        <h1>Speedy Cars</h1>
-        <nav>
-          <a href="index.html">Home</a>
-          <a href="cars.html">Cars</a>
-          <a href="about.html">About</a>
-          <a href="contact.html">Contact</a>
-          <a href="login.html">Login</a>
-          <a href="signup.html">Signup</a>
-        </nav>
-      </header>
-      
+  <header class="navbar">
+    <h1>Speedy Cars</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cars.html">Cars</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="login.html" class="login">Login</a>
+      <a href="signup.html" class="signup">Signup</a>
+    </nav>
+  </header>
+  
   <section class="sales-page">
-    <h2>Buy Car</h2>
-    <p>Please review your selected car and complete the purchase below.</p>
-    <!-- You can dynamically load selected car info if desired -->
-    <div id="selectedCar">
-      <!-- Car summary goes here -->
+    <h2>Purchase Car</h2>
+    <div id="carSummary">
+      <!-- Basic car details will be loaded here -->
+      <p id="carName"></p>
+      <p id="carPrice"></p>
+      <p id="carDescription"></p>
     </div>
-    <form action="/sales/checkout" method="POST">
+    <form id="checkoutForm" action="/sales/checkout" method="POST">
+      <input type="hidden" name="carId" id="carId" value="">
       <label for="address">Shipping Address:</label>
       <input type="text" id="address" name="address" required />
       <button type="submit">Complete Purchase</button>
     </form>
   </section>
+  
   <footer>
     <p>&copy; 2025 Speedy Sales. All rights reserved.</p>
   </footer>
+  
+  <script>
+    // Helper to extract query parameters from the URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+    
+    async function loadCarSummary() {
+      const carId = getQueryParam('id');
+      if (!carId) {
+        document.getElementById('carSummary').innerHTML = '<p>No car selected.</p>';
+        return;
+      }
+      // Set the hidden carId field in the form
+      document.getElementById('carId').value = carId;
+      try {
+        const response = await fetch(`/api/cars/${carId}`);
+        if (!response.ok) {
+          document.getElementById('carSummary').innerHTML = '<p>Car details not available.</p>';
+          return;
+        }
+        const car = await response.json();
+        document.getElementById('carName').textContent = 'Name: ' + car.name;
+        document.getElementById('carPrice').textContent = 'Price: $' + (car.price || 'N/A');
+        document.getElementById('carDescription').textContent = 'Description: ' + car.description;
+      } catch (error) {
+        console.error('Error loading car summary:', error);
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', loadCarSummary);
+  </script>
 </body>
 </html>

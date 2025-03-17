@@ -30,6 +30,9 @@ app.use('/auth', authRouter);
 const carsRouter = require('./routes/cars');
 app.use('/api/cars', carsRouter);
 
+const salesRouter = require('./routes/sales');
+app.use('/sales', salesRouter);
+
 // Endpoint to fetch current user info (for autofilling contact page)
 app.get('/api/user', (req, res) => {
   if (req.session.user) {
