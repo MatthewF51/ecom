@@ -19,17 +19,30 @@
     </nav>
   </header>
   
-  <section class="car-details">
-    <h2 id="carName">Car Name</h2>
-    <div class="car-images" id="carImages">
-      <!-- Main image and additional images will be injected here -->
+  <div class="details-container">
+    <div class="car-header">
+      <h2 id="carName">Car Name</h2>
     </div>
-    <div class="car-specifications" id="carSpecs">
-      <!-- Car specifications will be shown here -->
+    <div class="car-images-container">
+      <div class="car-main-image" id="carImages">
+        <!-- Main image will be injected here -->
+      </div>
+      <div id="additionalImagesCarousel" class="carousel-container">
+        <button class="prev" id="prevBtn">&#10094;</button>
+        <div class="carousel-images" id="carouselImages">
+          <!-- Additional images will be injected here -->
+        </div>
+        <button class="next" id="nextBtn">&#10095;</button>
+      </div>
+    </div>
+    <div class="car-specs" id="carSpecs">
       <p id="carDescription"></p>
-      <!-- Add more fields for specifications if needed, e.g., engine, horsepower, etc. -->
+      <h3>Attributes:</h3>
+      <ul id="carAttributes">
+        <!-- Attributes will be populated here -->
+      </ul>
     </div>
-  </section>
+  </div>
   
   <footer>
     <p>&copy; 2025 Speedy Sales. All rights reserved.</p>
@@ -38,13 +51,13 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
-    
-    // Function to extract query parameter from URL
+
+    // Helper function: Get a query parameter by name
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
-    
+
     async function loadCarDetails() {
       const carId = getQueryParam('id');
       if (!carId) {
@@ -60,25 +73,62 @@
         }
         const car = await response.json();
         
+        // Set basic details
         document.getElementById('carName').textContent = car.name;
         document.getElementById('carDescription').textContent = car.description;
         
         // Display the main image
         const carImagesContainer = document.getElementById('carImages');
         const mainImage = document.createElement('img');
-        mainImage.src = car.image_url || 'default-car.jpg';
+        mainImage.src = car.image_url ? "images/" + car.image_url : "images/default-car.jpg";
         mainImage.alt = car.name;
         carImagesContainer.appendChild(mainImage);
         
-        // If you have additional images stored (e.g., as a JSON array in another column), you could add them like this:
-        // if (car.additional_images) {
-        //   car.additional_images.forEach(url => {
-        //     const img = document.createElement('img');
-        //     img.src = url;
-        //     img.alt = car.name;
-        //     carImagesContainer.appendChild(img);
-        //   });
-        // }
+        // Setup carousel for additional images
+        const carouselImagesContainer = document.getElementById('carouselImages');
+        if (car.additional_images && Array.isArray(car.additional_images) && car.additional_images.length > 0) {
+          car.additional_images.forEach((img, index) => {
+            const additionalImg = document.createElement('img');
+            additionalImg.src = "images/" + img;
+            additionalImg.alt = car.name + " additional image " + (index + 1);
+            if(index === 0) {
+              additionalImg.classList.add('active');
+            }
+            carouselImagesContainer.appendChild(additionalImg);
+          });
+          
+          let currentSlide = 0;
+          const slides = carouselImagesContainer.querySelectorAll('img');
+          const totalSlides = slides.length;
+          
+          document.getElementById('prevBtn').addEventListener('click', () => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+          });
+          
+          document.getElementById('nextBtn').addEventListener('click', () => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % totalSlides;
+            slides[currentSlide].classList.add('active');
+          });
+        } else {
+          // Hide carousel if no additional images are available
+          document.getElementById('additionalImagesCarousel').style.display = 'none';
+        }
+        
+        // Display attributes
+        const attributesList = document.getElementById('carAttributes');
+        if (car.attributes && Array.isArray(car.attributes) && car.attributes.length > 0) {
+          car.attributes.forEach(attr => {
+            const li = document.createElement('li');
+            li.textContent = attr;
+            attributesList.appendChild(li);
+          });
+        } else {
+          attributesList.innerHTML = '<li>No attributes provided.</li>';
+        }
+        
       } catch (error) {
         console.error('Error loading car details:', error);
       }

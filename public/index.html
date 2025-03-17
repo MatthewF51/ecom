@@ -14,8 +14,8 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="cars.html">Cars</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
   </header>
 
@@ -30,15 +30,7 @@
   <section class="featured-cars">
     <h3>Featured Cars</h3>
     <div class="car-grid">
-      <div class="car-card" data-aos="fade-up">
-        <img src="car1.jpg" alt="Car 1" />
-        <div class="car-info">
-          <h4>2023 Eco Cruiser</h4>
-          <p>Simple, reliable, and efficient.</p>
-          <button onclick="window.location.href='cars.html'">View More</button>
-        </div>
-      </div>
-      <!-- You can add more static car cards if desired -->
+      <!-- Featured car cards will be injected here -->
     </div>
   </section>
 
@@ -49,6 +41,41 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
+
+    async function loadFeaturedCars() {
+      try {
+        const response = await fetch('/api/cars');
+        const cars = await response.json();
+        const container = document.querySelector('.featured-cars .car-grid');
+        
+        if (cars.length === 0) {
+          container.innerHTML = '<p>No featured cars available.</p>';
+          return;
+        }
+        
+        // Limit to 5 featured cars
+        const featuredCars = cars.slice(0, 5);
+        
+        featuredCars.forEach(car => {
+          const card = document.createElement('div');
+          card.className = 'car-card';
+          card.setAttribute('data-aos', 'fade-up');
+          card.innerHTML = `
+            <img src="${ car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg' }" alt="${car.name}" />
+            <div class="car-info">
+              <h4>${car.name}</h4>
+              <p>${car.description}</p>
+              <button onclick="window.location.href='carDetails.html?id=${car.id}'">View More</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Error loading featured cars:', error);
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', loadFeaturedCars);
   </script>
 </body>
 </html>
