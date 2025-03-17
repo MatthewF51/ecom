@@ -17,7 +17,7 @@ router.post('/signup', async (req, res) => {
       [name, email, hashedPassword]
     );
     req.session.user = result.rows[0];
-    res.redirect('/'); // Redirect to home after signup
+    res.redirect('/');
   } catch (err) {
     console.error(err);
     res.status(500).send('Error during signup.');
@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).send('Invalid email or password.');
     }
     req.session.user = user;
-    res.redirect('/'); // Redirect to home after login
+    res.redirect('/');
   } catch (err) {
     console.error(err);
     res.status(500).send('Error during login.');

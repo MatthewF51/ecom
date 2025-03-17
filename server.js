@@ -1,4 +1,6 @@
 // server.js
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
@@ -9,14 +11,15 @@ const port = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Session middleware (use an environment variable for secret in production)
+// Session middleware (use environment variable for secret)
 app.use(session({
-  secret: 'your_secret_key',
+  secret: process.env.SESSION_SECRET || 'your_default_secret',
   resave: false,
   saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
-// Serve static files
+// Serve static files from the "public" folder
 app.use(express.static('public'));
 
 // Mount authentication routes
@@ -30,7 +33,6 @@ app.use('/api/cars', carsRouter);
 // Endpoint to fetch current user info (for autofilling contact page)
 app.get('/api/user', (req, res) => {
   if (req.session.user) {
-    // Don't return the password
     const { id, name, email } = req.session.user;
     res.json({ id, name, email });
   } else {
@@ -38,7 +40,7 @@ app.get('/api/user', (req, res) => {
   }
 });
 
-// Protected sales route
+// Protected sales route middleware
 function requireAuth(req, res, next) {
   if (req.session.user) {
     next();
@@ -52,7 +54,7 @@ app.get('/sales.html', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sales.html'));
 });
 
-// Fallback route
+// Fallback route: serve index.html for any other request
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
