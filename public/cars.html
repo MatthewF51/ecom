@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- <script src="../routes/cars.js"></script> -->
+  <!-- <script src="../routes/cars.js"></script> -->
 </head>
 <body>
   <header class="navbar">
@@ -17,6 +18,8 @@
       <a href="cars.html">Cars</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
+      <a href="login.html">Login</a>
+      <a href="signup.html">Signup</a>
       <a href="login.html">Login</a>
       <a href="signup.html">Signup</a>
     </nav>
@@ -81,6 +84,20 @@
   
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
+   const rangeInput = document.getElementById('price');
+    const rangeValue = document.getElementById('rangeValue');
+
+    function updateValue(val) {
+      // Format the number as currency
+      rangeValue.textContent = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(val);
+    }
+
+    // Initialize display on load
+    updateValue(rangeInput.value);
+
+    // Optional: listen for change events as well
+    rangeInput.addEventListener('change', () => updateValue(rangeInput.value));
+  
    const rangeInput = document.getElementById('price');
     const rangeValue = document.getElementById('rangeValue');
 
