@@ -1,31 +1,31 @@
-// routes/sales.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const pool = require('../db');
+const pool = require("../db");
 
-router.post('/checkout', async (req, res) => {
-  // Ensure the user is logged in.
-  if (!req.session.user) {
-    return res.status(401).send('Not authenticated');
-  }
-  
-  const { carId, address } = req.body;
-  const userId = req.session.user.id;
-  
-  if (!carId || !address) {
-    return res.status(400).send('Car ID and shipping address are required.');
-  }
-  
+// Process a car purchase
+router.post("/", async (req, res) => {
+  const { carId, name, email, phone, address } = req.body;
+
   try {
-    const result = await pool.query(
-      'INSERT INTO sales (user_id, car_id, address) VALUES ($1, $2, $3) RETURNING *',
-      [userId, carId, address]
-    );
-    // Redirect to a confirmation page or send a success message.
-    res.redirect('/sales_confirmation.html');
-  } catch (err) {
-    console.error('Error processing sale:', err);
-    res.status(500).send('Error processing sale.');
+    await pool.query("BEGIN");
+
+    // Insert sale record
+    const insertSaleQuery = `
+      INSERT INTO sales (car_id, buyer_name, email, phone, address)
+      VALUES ($1, $2, $3, $4, $5)
+    `;
+    await pool.query(insertSaleQuery, [carId, name, email, phone, address]);
+
+    // Mark car as unavailable
+    const updateCarQuery = `UPDATE cars SET available = FALSE WHERE id = $1`;
+    await pool.query(updateCarQuery, [carId]);
+
+    await pool.query("COMMIT");
+    res.status(200).json({ message: "Purchase successful" });
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.error("Error processing sale:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
