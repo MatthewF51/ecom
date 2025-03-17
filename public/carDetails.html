@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Car Details - Speedy Sales</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+  <header class="navbar">
+    <h1>Speedy Cars</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cars.html">Cars</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+  
+  <section class="car-details">
+    <h2 id="carName">Car Name</h2>
+    <div class="car-images" id="carImages">
+      <!-- Main image and additional images will be injected here -->
+    </div>
+    <div class="car-specifications" id="carSpecs">
+      <p id="carDescription"></p>
+      <h3>Attributes:</h3>
+      <ul id="carAttributes">
+        <!-- Attributes list will be populated here -->
+      </ul>
+    </div>
+  </section>
+  
+  <footer>
+    <p>&copy; 2025 Speedy Sales. All rights reserved.</p>
+  </footer>
+  
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    // Helper: Get a query parameter by name
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    async function loadCarDetails() {
+      const carId = getQueryParam('id');
+      if (!carId) {
+        document.getElementById('carSpecs').innerHTML = '<p>No car selected.</p>';
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/cars/${carId}`);
+        if (!response.ok) {
+          document.getElementById('carSpecs').innerHTML = '<p>Car not found.</p>';
+          return;
+        }
+        const car = await response.json();
+        
+        // Set basic details
+        document.getElementById('carName').textContent = car.name;
+        document.getElementById('carDescription').textContent = car.description;
+        
+        // Display the main image
+        const carImagesContainer = document.getElementById('carImages');
+        const mainImage = document.createElement('img');
+        mainImage.src = car.image_url ? "images/" + car.image_url : "images/default-car.jpg";
+        mainImage.alt = car.name;
+        carImagesContainer.appendChild(mainImage);
+        
+        // Display additional images if available
+        if (car.additional_images && Array.isArray(car.additional_images)) {
+          car.additional_images.forEach(img => {
+            const additionalImg = document.createElement('img');
+            additionalImg.src = "images/" + img;
+            additionalImg.alt = car.name + " additional image";
+            carImagesContainer.appendChild(additionalImg);
+          });
+        }
+        
+        // Display attributes
+        const attributesList = document.getElementById('carAttributes');
+        if (car.attributes && Array.isArray(car.attributes) && car.attributes.length > 0) {
+          car.attributes.forEach(attr => {
+            const li = document.createElement('li');
+            li.textContent = attr;
+            attributesList.appendChild(li);
+          });
+        } else {
+          attributesList.innerHTML = '<li>No attributes provided.</li>';
+        }
+        
+      } catch (error) {
+        console.error('Error loading car details:', error);
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', loadCarDetails);
+  </script>
+</body>
+</html>

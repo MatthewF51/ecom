@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cars - Speedy Sales</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+  <header class="navbar">
+    <h1>Speedy Cars</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cars.html">Cars</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="cars-page">
+    <h2>Our Cars</h2>
+    <div id="carsContainer" class="car-grid">
+      <!-- Car cards will be injected here by JavaScript -->
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Speedy Sales. All rights reserved.</p>
+  </footer>
+  
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    async function loadCars() {
+      try {
+        const response = await fetch('/api/cars');
+        const cars = await response.json();
+        const container = document.getElementById('carsContainer');
+        
+        if (cars.length === 0) {
+          container.innerHTML = '<p>No cars available.</p>';
+          return;
+        }
+        
+        cars.forEach(car => {
+          const card = document.createElement('div');
+          card.className = 'car-card';
+          card.setAttribute('data-aos', 'fade-up');
+          
+          card.innerHTML = `
+            <img src="${ car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg' }" alt="${car.name}" />
+            <div class="car-info">
+              <h4>${car.name}</h4>
+              <p>${car.description}</p>
+              <button onclick="window.location.href='carDetails.html?id=${car.id}'">View Details</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Error loading cars:', error);
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', loadCars);
+  </script>
+</body>
+</html>
