@@ -25,9 +25,11 @@
       <!-- Main image and additional images will be injected here -->
     </div>
     <div class="car-specifications" id="carSpecs">
-      <!-- Car specifications will be shown here -->
       <p id="carDescription"></p>
-      <!-- Add more fields for specifications if needed, e.g., engine, horsepower, etc. -->
+      <h3>Attributes:</h3>
+      <ul id="carAttributes">
+        <!-- Attributes list will be populated here -->
+      </ul>
     </div>
   </section>
   
@@ -38,13 +40,13 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
-    
-    // Function to extract query parameter from URL
+
+    // Helper: Get a query parameter by name
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
-    
+
     async function loadCarDetails() {
       const carId = getQueryParam('id');
       if (!carId) {
@@ -60,25 +62,39 @@
         }
         const car = await response.json();
         
+        // Set basic details
         document.getElementById('carName').textContent = car.name;
         document.getElementById('carDescription').textContent = car.description;
         
         // Display the main image
         const carImagesContainer = document.getElementById('carImages');
         const mainImage = document.createElement('img');
-        mainImage.src = car.image_url || 'default-car.jpg';
+        mainImage.src = car.image_url ? "images/" + car.image_url : "images/default-car.jpg";
         mainImage.alt = car.name;
         carImagesContainer.appendChild(mainImage);
         
-        // If you have additional images stored (e.g., as a JSON array in another column), you could add them like this:
-        // if (car.additional_images) {
-        //   car.additional_images.forEach(url => {
-        //     const img = document.createElement('img');
-        //     img.src = url;
-        //     img.alt = car.name;
-        //     carImagesContainer.appendChild(img);
-        //   });
-        // }
+        // Display additional images if available
+        if (car.additional_images && Array.isArray(car.additional_images)) {
+          car.additional_images.forEach(img => {
+            const additionalImg = document.createElement('img');
+            additionalImg.src = "images/" + img;
+            additionalImg.alt = car.name + " additional image";
+            carImagesContainer.appendChild(additionalImg);
+          });
+        }
+        
+        // Display attributes
+        const attributesList = document.getElementById('carAttributes');
+        if (car.attributes && Array.isArray(car.attributes) && car.attributes.length > 0) {
+          car.attributes.forEach(attr => {
+            const li = document.createElement('li');
+            li.textContent = attr;
+            attributesList.appendChild(li);
+          });
+        } else {
+          attributesList.innerHTML = '<li>No attributes provided.</li>';
+        }
+        
       } catch (error) {
         console.error('Error loading car details:', error);
       }

@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// New route: fetch a single car by id
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -22,7 +21,7 @@ router.get('/:id', async (req, res) => {
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Car not found' });
     } else {
-      res.json(result.rows[0]);
+      res.json(result.rows[0]);  // This row should now include image_url, additional_images, and attributes.
     }
   } catch (err) {
     console.error('Error fetching car details:', err);
