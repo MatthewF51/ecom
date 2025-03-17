@@ -129,7 +129,7 @@
 		
 		types = types.slice(0, -4); // Removes last 4 characters
 		
-		const query = "SELECT * FROM cars WHERE attributes @> ARRAY['" + atts +"'] AND " + types + " AND price = " + selectedPrice;
+		const query = "SELECT * FROM cars WHERE attributes @> ARRAY['" + selectedCarAttributes +"'] AND " + types + " AND price = " + selectedPrice;
 		const params = new URLSearchParams(query);
 		const response = await fetch(`/api/cars/query?${params.toString()}`);
         const cars = await response.json();
