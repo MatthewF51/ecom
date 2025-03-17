@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buy Car - Speedy Sales</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <h1>Speedy Cars</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cars.html">Cars</a>
+      <a href="sales.html">Buy Car</a>
+    </nav>
+  </header>
+  <section class="sales-page">
+    <h2>Buy Car</h2>
+    <p>Please review your selected car and complete the purchase below.</p>
+    <!-- You can dynamically load selected car info if desired -->
+    <div id="selectedCar">
+      <!-- Car summary goes here -->
+    </div>
+    <form action="/sales/checkout" method="POST">
+      <label for="address">Shipping Address:</label>
+      <input type="text" id="address" name="address" required />
+      <button type="submit">Complete Purchase</button>
+    </form>
+  </section>
+  <footer>
+    <p>&copy; 2025 Speedy Sales. All rights reserved.</p>
+  </footer>
+</body>
+</html>
