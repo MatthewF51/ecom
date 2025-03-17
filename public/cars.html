@@ -14,8 +14,8 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="cars.html">Cars</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
   </header>
 
@@ -51,13 +51,14 @@
           card.setAttribute('data-aos', 'fade-up');
           
           card.innerHTML = `
-            <img src="${car.image_url || 'default-car.jpg'}" alt="${car.name}" />
+            <img src="${'images/' + car.image_url || 'default-car.jpg'}" alt="${car.name}" />
             <div class="car-info">
               <h4>${car.name}</h4>
               <p>${car.description}</p>
-              <button onclick="alert('Car details not implemented yet')">View Details</button>
+              <button onclick="window.location.href='carDetails.html?id=${car.id}'">View Details</button>
             </div>
           `;
+
           
           container.appendChild(card);
         });
