@@ -96,7 +96,7 @@
   
     AOS.init();
 	
-	async initialCars() {
+	async function initialCars() {
 		const response = await fetch(`/api/cars`);
         const cars = await response.json();
 		loadCars(cars);
