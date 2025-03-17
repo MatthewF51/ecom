@@ -230,8 +230,7 @@ footer {
   margin-top: 2rem;
 }
 
-/* --- Car Details Page Styling --- */
-
+/* --- Car Details Page Enhancements --- */
 .details-container {
   max-width: 900px;
   margin: 2rem auto;
@@ -241,14 +240,11 @@ footer {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.car-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
 .car-header h2 {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
+  text-align: center;
+  color: #fff;
 }
 
 .car-images-container {
@@ -265,7 +261,7 @@ footer {
   border-radius: 10px;
 }
 
-/* Carousel styling for additional images */
+/* Carousel styling */
 .carousel-container {
   position: relative;
   width: 100%;
@@ -307,21 +303,42 @@ footer {
   right: 10px;
 }
 
+/* Technical Specs and Attributes */
 .car-specs {
   margin-top: 2rem;
   padding: 1rem;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
+  color: #fff;
 }
 
 .car-specs h3 {
   margin-bottom: 0.5rem;
+  color: #ff6600;
 }
 
 .car-specs ul {
   list-style: disc;
   margin-left: 1.5rem;
+  color: #fff;
 }
+
+/* Buy Button */
+.car-specs button {
+  margin-top: 1rem;
+  padding: 0.8rem 2rem;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.car-specs button:hover {
+  background: #e65c00;
+}
+
 
 /* --- About Page Styling --- */
 .about-page {
@@ -460,15 +477,21 @@ footer {
   color: #fff;
 }
 
-/* --- Auth Page Styling --- */
+/* --- Authentication Page Styling --- */
 .auth-page {
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
+}
+
+.auth-page h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
 }
 
 .auth-page form {
@@ -478,6 +501,8 @@ footer {
 }
 
 .auth-page label {
+  font-weight: 600;
+  color: #fff;
   text-align: left;
 }
 
@@ -485,6 +510,7 @@ footer {
   padding: 0.75rem;
   border: none;
   border-radius: 5px;
+  font-size: 1rem;
 }
 
 .auth-page button {
@@ -494,7 +520,13 @@ footer {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
+
+.auth-page button:hover {
+  background: #e65c00;
+}
+
 
 /* --- Sales Page Styling --- */
 .sales-page {
