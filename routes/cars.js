@@ -6,7 +6,7 @@ const pool = require('../db');
 // Route: Fetch all cars
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM cars WHERE carType ="SUV"');
+    const result = await pool.query('SELECT * FROM cars WHERE cartype ="SUV"');
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching cars:', err);
