@@ -30,28 +30,29 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Route: Fetch cars by query
+// Route: Fetch cars based on filters
 router.get('/query', async (req, res) => {
   try {
-	const { carType, attributes, price } = req.query;
+    let { carType, attributes, price } = req.query;
 
-	const attributeArray = attributes.split(',');
-	
-    const query = `
-      SELECT * FROM cars
-      WHERE carType = $1
-        AND attributes && $2
-        AND price <= $3
-    `;
+    let query = `SELECT * FROM cars WHERE price <= $1`;
+    let params = [price];
 
-    const params = [carType, attributeArray, price];
+    // Handle "Any" selection for car type
+    if (carType && carType !== '*') {
+      query += ` AND cartype = $${params.length + 1}`;
+      params.push(carType);
+    }
+
+    // Handle attributes (stored as an array in the DB)
+    if (attributes) {
+      const attributeArray = attributes.split(',');
+      query += ` AND attributes @> $${params.length + 1}`;
+      params.push(attributeArray);
+    }
 
     const result = await pool.query(query, params);
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Cars not found' });
-    } else {
-      res.json(result.rows[0]);
-    }
+    res.json(result.rows);
   } catch (err) {
     console.error('Error fetching car details:', err);
     res.status(500).json({ error: 'Internal server error' });
