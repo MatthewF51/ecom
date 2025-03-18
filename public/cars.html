@@ -129,6 +129,7 @@
     // Compose the query string
     const query = `SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price <= ${selectedPrice}`;
 
+	alert(query);  	
     console.log('Generated query:', query); // Debugging
 
     // Send query as a param (note: might not work with full SQL query)
