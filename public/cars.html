@@ -63,7 +63,7 @@
     </div>
 
     <!-- Submit Button -->
-    <button type="submit" class="submit-btn" onsubmit="findCars()">Search Cars</button>
+    <button type="submit" class="submit-btn">Search Cars</button>
   </form>
   </section>
 
@@ -99,6 +99,7 @@
 	async function initialCars() {
 		const response = await fetch(`/api/cars`);
         const cars = await response.json();
+		findCars()
 		loadCars(cars);
 	}
 	
