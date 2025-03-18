@@ -104,26 +104,19 @@
 	
 	async function findCars() {
 		try {
-		
+			alert('Changes 6 Added!')
 			const car_types = getQueryParam('car_type');
 			const car_attributes = getQueryParam('car_attributes');
 			const price = getQueryParam('price');
 			
 			if (!price){
 				const response = await fetch("/api/cars");
-				const cars = await response.json();	
+				let cars = await response.json();	
 				loadCars(cars)
 			} else {
-			
-				// URL encode each value (important!)
-				const encodedTypes = encodeURIComponent(car_types);
-				const encodedAtts = encodeURIComponent(car_attributes);
-				const encodedPrice = encodeURIComponent(price);
-				
-				alert(car_types);
 
-				const response = await fetch(`/api/cars/${encodedTypes}/${encodedAtts}/${encodedPrice}`);	
-				cars = await response.json();
+				const response = await fetch(`/api/cars/${car_types}/${car_attributes}/${price}`);	
+				let cars = await response.json();
 				loadCars(cars);
 			};
 		  
