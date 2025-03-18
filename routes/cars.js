@@ -34,6 +34,7 @@ router.get('/:id', async (req, res) => {
 router.post('/query', async (req, res) => {
   try {
     const { search } = req.body;
+    alert(search);
     const result = await pool.query(search);
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Car not found' });
