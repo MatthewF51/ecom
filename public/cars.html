@@ -104,44 +104,7 @@
 		loadCars(cars);
 	}
 	
-	async function findCars() {
-  const form = document.getElementById('searchForm');
 
-  // Add event listener to handle the form submission
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent the page from reloading
-
-    // Grab the input values
-    const selectedCarTypes = Array.from(
-      document.querySelectorAll('input[name="car_type"]:checked')
-    ).map(cb => cb.value);
-
-    const selectedAttributes = Array.from(
-      document.querySelectorAll('input[name="car_attribute"]:checked')
-    ).map(cb => cb.value);
-
-    const selectedPrice = document.getElementById('price').value;
-
-    // Build conditions
-    let types = selectedCarTypes.map(type => "cartype = '${type}'").join(' OR ');
-
-    let atts = selectedAttributes.map(att => "'${att}'").join(',');
-	
-
-    // Compose the query string
-    const sqlQuery = "SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price <= ${selectedPrice}";
-	
-	alert(sqlQuery);
-	
-    const response = await fetch(`/api/cars/query/${sqlQuery}`);
-    const cars = await response.json();
-	loadCars(cars);
-	  
-    } catch (error) {
-      console.error('Error fetching cars:', error);
-    }
-  );
-}
 
 
     async function loadCars(cars) {
