@@ -7,6 +7,7 @@ const pool = require('../db');
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM cars');
+	alert('BOO');
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching cars:', err);
@@ -57,4 +58,3 @@ router.get('/:types/:atts/:price', async (req, res) => {
 });
 
 module.exports = router;
-
