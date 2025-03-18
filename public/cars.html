@@ -102,45 +102,7 @@
 		loadCars(cars);
 	}
 	
-	async function findCars() {
-	    // Get the form element
-		const form = document.getElementById('searchForm');
 
-		// Add event listener for form submission
-		form.addEventListener('submit', (event) => {
-			event.preventDefault(); // Prevent the page from reloading
-
-		// Grab the input values
-		const selectedCarTypes = Array.from(
-		  document.querySelectorAll('input[name="car_type"]:checked')
-		).map(cb => cb.value);
-		
-		const selectedAttributes = Array.from(
-		  document.querySelectorAll('input[name="car_attribute"]:checked')
-		).map(cb => cb.value);
-		
-		const selectedPrice = document.getElementById('price').value;
-		
-		let types = '';
-		
-		selectedCarTypes.forEach((type) => {
-		  types += "cartype = '" + type + "' OR ";
-		});
-		
-		types = types.slice(0, -4); // Removes last 4 characters
-		
-		const query = "SELECT * FROM cars WHERE attributes @> ARRAY['" + selectedCarAttributes +"'] AND " + types + " AND price = " + selectedPrice;
-		fetch('/api/cars/query', {
-		  method: 'POST',
-		  headers: {
-			'Content-Type': 'application/json',
-		  },
-		  body: JSON.stringify({ sqlQuery: query }),
-		})
-        const cars = await response.json();
-		
-		loadCars(cars);
-	}
 
     async function loadCars(cars) {
       try {
