@@ -30,42 +30,47 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Route: Fetch cars based on user filters
+// Route: Fetch cars by query (Filtered in JS)
 router.get('/query', async (req, res) => {
   try {
     let { carType, attributes, price } = req.query;
 
+    // Fetch all cars first
+    const result = await pool.query(`SELECT * FROM cars`);
+    let cars = result.rows;
+
+    console.log("Fetched all cars:", cars.length);
+
     // Convert attributes into an array (or empty if not provided)
     const attributeArray = attributes ? attributes.split(',') : [];
 
-    // Handle 'Any' case properly
-    let query = `SELECT * FROM cars WHERE price <= $1`;
-    let params = [price];
+    // Filter in JavaScript instead of SQL
+    let filteredCars = cars.filter(car => {
+      // Check price condition
+      if (price && car.price > Number(price)) return false;
 
-    // If carType is not 'Any', add it to the query
-    if (carType !== '*' && carType) {
-      query += ` AND cartype = $2`;
-      params.push(carType);
-    }
+      // Check carType condition (ignore if `*`)
+      if (carType !== '*' && carType && car.cartype !== carType) return false;
 
-    // If attributes are selected, use array containment
-    if (attributeArray.length > 0) {
-      query += ` AND attributes @> $${params.length + 1}`;
-      params.push(attributeArray);
-    }
+      // Check attributes (only if attributes are provided)
+      if (attributeArray.length > 0) {
+        const carAttributes = car.attributes || [];
+        if (!attributeArray.every(attr => carAttributes.includes(attr))) return false;
+      }
 
-    console.log("Executing SQL Query:", query, "with params:", params);
+      return true;
+    });
 
-    const result = await pool.query(query, params);
+    console.log("Filtered cars:", filteredCars.length);
 
-    if (result.rows.length === 0) {
+    if (filteredCars.length === 0) {
       return res.status(404).json({ error: 'No cars found matching your criteria' });
     }
 
-    res.json(result.rows);
-
+    res.json(filteredCars);
+    
   } catch (err) {
-    console.error('Error executing recommendation query:', err);
+    console.error('Error executing recommendation filtering:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
