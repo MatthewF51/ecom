@@ -98,13 +98,13 @@
 	
 	async function initialCars() {
 		const response = await fetch("/api/cars");
-        const cars = await response.json();
-		alert('Changes Added!');
-		findCars();
+        const cars = await response.json();	
+		
 		loadCars(cars);
+		alert('Changes Added1!');
 	}
 	
-
+	
 
 
     async function loadCars(cars) {
