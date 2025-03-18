@@ -34,7 +34,7 @@
         <label><input type="checkbox" id="Saloon" name="car_type" value="Saloon">Saloon</label>
         <label><input type="checkbox" id="Coupe" name="car_type" value="Coupe">Coupe</label>
         <label><input type="checkbox" id="Supercar" name="car_type" value="Supercar">Supercar</label>
-        <label><input type="checkbox" id="AnyCarType" name="car_type" value="Any">Any</label>
+        <label><input type="checkbox" id="AnyCarType" name="car_type" value="*">Any</label>
       </div>
     </div>
 
@@ -49,7 +49,7 @@
         <label><input type="checkbox" id="TwoSeater" name="car_attribute" value="two-seater">2-Seater</label>
         <label><input type="checkbox" id="FiveSeater" name="car_attribute" value="five-seater">5-Seater</label>
         <label><input type="checkbox" id="SevenSeater" name="car_attribute" value="seven-seater">7-Seater</label>
-        <label><input type="checkbox" id="AnyAttribute" name="car_attribute" value="Any">Any</label>
+        <label><input type="checkbox" id="AnyAttribute" name="car_attribute" value="*">Any</label>
       </div>
     </div>
 
@@ -57,7 +57,7 @@
     <div class="section">
       <label>Maximum Price:</label>
       <div class="range-container">
-        <input type="range" id="price" name="price" min="30000" max="3000000" value="30000" oninput="updateValue(this.value)">
+        <input type="range" id="price" name="price" min="30000" max="3000000" value="30000" step="5000" oninput="updateValue(this.value)">
         <div id="rangeValue">£30,000</div>
       </div>
     </div>
@@ -126,7 +126,7 @@
     let atts = selectedAttributes.map(att => `'${att}'`).join(',');
 
     // Compose the query string
-    const query = `SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price = ${selectedPrice}`;
+    const query = `SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price <= ${selectedPrice}`;
 
     console.log('Generated query:', query); // Debugging
 
