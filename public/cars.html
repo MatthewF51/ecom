@@ -143,10 +143,6 @@
     }
 	
 	function updatePreference(carId){
-	
-		const response = await fetch(`/api/cars/${carId}`);
-        const car = await response.json();
-		
 		
 		window.location.href=`carDetails.html?id=${carId}`;
 	}
