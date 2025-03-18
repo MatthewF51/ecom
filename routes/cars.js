@@ -31,16 +31,16 @@ router.get('/:id', async (req, res) => {
 });
 
 // Route: Fetch cars by query
-/*router.get('/query', async (req, res) => {
+router.get('/:carType/:attributes/:price', async (req, res) => {
   try {
-    const { carType, attributes, price } = req.query;
+	const { carType, attributes, price } = req.params;
 
-    const attributeArray = attributes.split(',');
-
+	const attributeArray = attributes.split(',');
+	
     const query = `
       SELECT * FROM cars
       WHERE carType = $1
-        AND attributes && $2
+        AND attributes @> ARRAY[$2];
         AND price <= $3
     `;
 
@@ -56,36 +56,6 @@ router.get('/:id', async (req, res) => {
     console.error('Error fetching car details:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
-});*/
-
-// Route: Fetch cars by query
-router.get('/query', async (req, res) => {
-  try {
-    const { carType, attributes, price } = req.query;
-    const attributeArray = attributes ? attributes.split(',') : [];
-
-    const query = `
-      SELECT * FROM cars
-      WHERE ($1 = '*' OR carType = $1)
-        AND (array_length($2, 1) IS NULL OR attributes::text LIKE ANY ($2))
-        AND price <= $3
-    `;
-
-    const params = [carType, attributeArray.map(attr => `%${attr}%`), price];
-
-    const result = await pool.query(query, params);
-    
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: 'No matching cars found' });
-    } else {
-      res.json(result.rows);
-    }
-  } catch (err) {
-    console.error('Error fetching cars:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
 });
-
-
 
 module.exports = router;
