@@ -31,11 +31,10 @@ router.get('/:id', async (req, res) => {
 });
 
 // Route: Fetch cars by query
-router.get('/query', async (req, res) => {
+router.post('/query', async (req, res) => {
   try {
-    const search = req.body;
-	alert(search);
-    const result = await pool.query(search);
+    const { query } = req.body;
+    const result = await pool.query(query);
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Cars not found' });
     } else {
