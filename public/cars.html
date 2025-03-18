@@ -104,7 +104,7 @@
 	
 	async function findCars() {
 		try {
-			alert('Changes 7 Added!')
+			alert('Changes 8 Added!')
 			const car_types = getQueryParam('car_type');
 			const car_attributes = getQueryParam('car_attributes');
 			const price = getQueryParam('price');
@@ -112,7 +112,7 @@
 			if (!price){
 				const response = await fetch("/api/cars");
 				let cars = await response.json();	
-				loadCars(cars)
+				loadCars(cars);
 			} else {
 			
 			const params = {carType: car_types, attributes: car_attributes, price: price}
@@ -133,7 +133,7 @@
         
         if (cars.length === 0) {
           container.innerHTML = '<p>No cars available.</p>';
-		  alert('Naw')
+		  alert('Naw');
           return;
         }
         
