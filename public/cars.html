@@ -135,17 +135,23 @@
           <div class="car-info">
             <h4>${car.name}</h4>
             <p>${car.description}</p>
-            <button onclick="updatePreference(${car.id})">View Details</button>
+            <button onclick="updatePreference(${car.id},${car.car_type},${car.attributes})">View Details</button>
           </div>
         `;
         container.appendChild(card);
       });
-    }
+    } 
 	
-	function updatePreference(carId){
+	async function updatePreference(carId, type, attributes){
+	
+		const response = await fetch(`/api/cars/${carId}/${type}/${attributes}`);
+        const car = await response.json();
+		
+		
 		
 		window.location.href=`carDetails.html?id=${carId}`;
 	}
+
 
     document.getElementById('searchForm').addEventListener('submit', findCars);
     window.addEventListener('DOMContentLoaded', fetchCars); // Fetch cars on page load
