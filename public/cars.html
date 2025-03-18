@@ -135,12 +135,17 @@
           <div class="car-info">
             <h4>${car.name}</h4>
             <p>${car.description}</p>
-            <button onclick="window.location.href='carDetails.html?id=${car.id}'">View Details</button>
+            <button onclick="updatePreference(${car.id})">View Details</button>
           </div>
         `;
         container.appendChild(card);
       });
     }
+	
+	function updatePreference(carID){
+	
+		window.location.href="carDetails.html?id=${carID}";
+	}
 
     document.getElementById('searchForm').addEventListener('submit', findCars);
     window.addEventListener('DOMContentLoaded', fetchCars); // Fetch cars on page load
