@@ -33,7 +33,9 @@ router.get('/:id', async (req, res) => {
 // Route: Fetch cars by query
 router.get('/:type/:atts/:price', async (req, res) => {
   try {
-    const { type, atts, price } = req.params;
+    const type = req.params.type;
+	const atts = req.params.atts;   
+	const price = req.params.price;
     const result = await pool.query('SELECT * FROM cars WHERE ${types} AND attributes @> ARRAY[${atts}] AND price <= ${price}', [type,atts,price]);
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Cars not found' });
