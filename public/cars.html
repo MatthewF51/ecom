@@ -104,7 +104,7 @@
 	
 	async function findCars() {
 		try {
-			alert('Changes 6 Added!')
+			alert('Changes 7 Added!')
 			const car_types = getQueryParam('car_type');
 			const car_attributes = getQueryParam('car_attributes');
 			const price = getQueryParam('price');
@@ -133,6 +133,7 @@
         
         if (cars.length === 0) {
           container.innerHTML = '<p>No cars available.</p>';
+		  alert('Naw')
           return;
         }
         
