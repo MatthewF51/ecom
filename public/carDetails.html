@@ -137,18 +137,6 @@
            // Hide carousel if no additional images are available
            document.getElementById('additionalImagesCarousel').style.display = 'none';
          }
- 
-         // Display attributes
-         const attributesList = document.getElementById('carAttributes');
-         if (car.attributes && Array.isArray(car.attributes) && car.attributes.length > 0) {
-           car.attributes.forEach(attr => {
-             const li = document.createElement('li');
-             li.textContent = attr;
-             attributesList.appendChild(li);
-           });
-         } else {
-           attributesList.innerHTML = '<li>No attributes provided.</li>';
-         }
          
          // Conditionally add Buy Now button if car is available
          const buySection = document.getElementById('buySection');
