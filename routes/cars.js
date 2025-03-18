@@ -75,7 +75,7 @@ router.get('/query', async (req, res) => {
   }
 });
 
-router.get('/:id/:type/:attributes', async (req, res) => {
+router.get('/:id/type/:type/attributes/:attributes', async (req, res) => {
   try {
     const { id, type, attributes } = req.params;
 	
