@@ -96,18 +96,14 @@
   
     AOS.init();
 	
-	 // Helper function: Get a query parameter by name
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
+
 	
 	async function initialCars() {
 		const response = await fetch("/api/cars");
         const cars = await response.json();	
-		findCars();
 		loadCars(cars);
 		alert('Changes Added2!');
+		findCars();
 	}
 	
 	async function findCars() {
