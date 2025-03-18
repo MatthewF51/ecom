@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Route: Fetch a single car by id
+// Route: Fetch a single car by ID
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -30,27 +30,28 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Route: Fetch cars based on filters (Recommendation System)
+// Route: Fetch cars by query (Recommendation System)
 router.get('/query', async (req, res) => {
   try {
     let { carType, attributes, price } = req.query;
 
-    // Default values
     let query = `SELECT * FROM cars WHERE price <= $1`;
-    let params = [price];
+    let params = [parseFloat(price)];
 
     // Handle "Any" selection for car type
-    if (carType && carType !== '*') {
+    if (carType && carType !== '*' && carType !== 'Any') {
       query += ` AND cartype = $${params.length + 1}`;
       params.push(carType);
     }
 
-    // Handle attributes (stored as an array in the DB)
+    // Handle attributes correctly for PostgreSQL array
     if (attributes && attributes !== '') {
       const attributeArray = attributes.split(',');
       query += ` AND attributes @> $${params.length + 1}`;
       params.push(attributeArray);
     }
+
+    console.log("Executing SQL Query:", query, params); // Debugging
 
     const result = await pool.query(query, params);
 
