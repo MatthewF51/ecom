@@ -39,7 +39,7 @@ router.get('/query', async (req, res) => {
 	
     const query = `
       SELECT * FROM cars
-      WHERE car_type = $1
+      WHERE carType = $1
         AND attributes && $2
         AND price <= $3
     `;
