@@ -36,8 +36,7 @@ router.get('/query', async (req, res) => {
 	const { carType, attributes, price } = req.query;
 
 	const attributeArray = attributes.split(',');
-
-  try {
+	
     const query = `
       SELECT * FROM cars
       WHERE car_type = $1
