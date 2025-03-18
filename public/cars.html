@@ -123,13 +123,13 @@
     const selectedPrice = document.getElementById('price').value;
 
     // Build conditions
-    let types = selectedCarTypes.map(type => `cartype = '${type}'`).join(' OR ');
+    let types = selectedCarTypes.map(type => "cartype = '${type}'").join(' OR ');
 
-    let atts = selectedAttributes.map(att => `'${att}'`).join(',');
+    let atts = selectedAttributes.map(att => "'${att}'").join(',');
 	
 
     // Compose the query string
-    const query = `SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price <= ${selectedPrice}`;
+    const query = "SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price <= ${selectedPrice}";
 
 }
 
