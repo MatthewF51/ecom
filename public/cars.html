@@ -78,52 +78,62 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
-
+  
     function updateValue(val) {
       document.getElementById("rangeValue").textContent = 
         new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(val);
     }
-
-    document.getElementById("searchForm").addEventListener("submit", async function (event) {
+  
+    async function findCars(event) {
       event.preventDefault();
-      
-      const formData = new FormData(this);
-      let carTypes = formData.getAll("car_type");
-      let attributes = formData.getAll("car_attribute");
-      let price = formData.get("price");
-
-      // Handle 'Any' selections
-      carTypes = carTypes.includes("Any") || carTypes.length === 0 ? "*" : carTypes.join(",");
-      attributes = attributes.includes("Any") || attributes.length === 0 ? "" : attributes.join(",");
-
-      const queryParams = new URLSearchParams({
-        carType: carTypes,
-        attributes: attributes,
-        price: price || 3000000
-      }).toString();
-
+  
       try {
+        const form = document.getElementById('searchForm');
+        const formData = new FormData(form);
+    
+        let carType = formData.getAll('car_type').join(',');
+        let attributes = formData.getAll('car_attribute').join(',');
+        let price = formData.get('price') || 3000000; // Default max price
+  
+        // If no filters are selected, fetch all cars
+        if (!carType && !attributes && !price) {
+          const response = await fetch("/api/cars");
+          const cars = await response.json();
+          return loadCars(cars);
+        }
+    
+        // Build query parameters correctly
+        const queryParams = new URLSearchParams({
+          carType: carType || '*',
+          attributes: attributes || '',
+          price: price
+        });
+  
         const response = await fetch(`/api/cars/query?${queryParams}`);
-        if (!response.ok) throw new Error("API request failed");
-
+  
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+  
         const cars = await response.json();
         loadCars(cars);
       } catch (error) {
-        console.error("Error fetching cars:", error);
+        console.error('Error fetching cars:', error);
       }
-    });
-
+    }
+  
     async function loadCars(cars) {
-      const container = document.getElementById("carsContainer");
+      const container = document.getElementById('carsContainer');
       container.innerHTML = "";
+      
       if (!Array.isArray(cars) || cars.length === 0) {
-        container.innerHTML = "<p>No cars available.</p>";
+        container.innerHTML = '<p>No cars available.</p>';
         return;
       }
-
+      
       cars.forEach(car => {
-        const card = document.createElement("div");
-        card.className = "car-card";
+        const card = document.createElement('div');
+        card.className = 'car-card';
         card.innerHTML = `
           <img src="${car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg'}" alt="${car.name}" />
           <div class="car-info">
@@ -135,6 +145,16 @@
         container.appendChild(card);
       });
     }
+  
+    document.getElementById('searchForm').addEventListener('submit', findCars);
+  
+    // Load all cars by default on page load
+    window.addEventListener('DOMContentLoaded', async () => {
+      const response = await fetch("/api/cars");
+      const cars = await response.json();
+      loadCars(cars);
+    });
   </script>
+  
 </body>
 </html>
