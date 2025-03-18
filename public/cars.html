@@ -79,33 +79,43 @@
         new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(val);
     }
 
-    document.getElementById("searchForm").addEventListener("submit", async function(event) {
-      event.preventDefault();
-      const formData = new FormData(this);
-      
-      const carTypes = formData.getAll("car_type").join(",");
-      const attributes = formData.getAll("car_attribute").join(",");
-      const price = formData.get("price");
-      
-      const queryParams = new URLSearchParams({
-        carType: carTypes || "*",
-        attributes: attributes,
-        price: price
-      }).toString();
-      
+    document.getElementById('searchForm').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent form reload
+      findCars();
+    });
+
+    async function findCars() {
       try {
+        const form = document.getElementById('searchForm');
+        const formData = new FormData(form);
+    
+        let carType = formData.getAll('car_type').join(',') || '*';
+        let attributes = formData.getAll('car_attribute').join(',');
+        let price = formData.get('price') || 3000000;
+
+        const queryParams = new URLSearchParams({
+          carType: carType,
+          attributes: attributes,
+          price: price
+        });
+
         const response = await fetch(`/api/cars/query?${queryParams}`);
-        if (!response.ok) throw new Error("API request failed");
+
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+
         const cars = await response.json();
         loadCars(cars);
       } catch (error) {
-        console.error("Error fetching cars:", error);
+        console.error('Error fetching cars:', error);
       }
-    });
+    }
 
     async function loadCars(cars) {
       const container = document.getElementById('carsContainer');
       container.innerHTML = "";
+
       if (!Array.isArray(cars) || cars.length === 0) {
         container.innerHTML = '<p>No cars available.</p>';
         return;
@@ -125,6 +135,9 @@
         container.appendChild(card);
       });
     }
+
+    // Load cars on page load
+    window.addEventListener('DOMContentLoaded', findCars);
   </script>
 </body>
 </html>

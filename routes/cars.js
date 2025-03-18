@@ -33,38 +33,45 @@ router.get('/:id', async (req, res) => {
 
 // Route: Fetch cars based on query parameters
 router.get('/query', async (req, res) => {
-    try {
-        let { carType, attributes, price } = req.query;
-        let queryParams = [];
-        let queryConditions = [];
+  try {
+    let { carType, attributes, price } = req.query;
 
-        if (carType && carType !== '*') {
-            queryParams.push(carType);
-            queryConditions.push(`cartype = $${queryParams.length}`);
-        }
+    // Ensure attributes is properly parsed as an array
+    const attributeArray = attributes ? attributes.split(',') : [];
 
-        if (attributes) {
-            let attributeArray = attributes.split(',');
-            queryParams.push(attributeArray);
-            queryConditions.push(`attributes && $${queryParams.length}`);
-        }
-
-        if (price) {
-            queryParams.push(parseFloat(price));
-            queryConditions.push(`price <= $${queryParams.length}`);
-        }
-
-        let query = 'SELECT * FROM cars';
-        if (queryConditions.length > 0) {
-            query += ' WHERE ' + queryConditions.join(' AND ');
-        }
-
-        const result = await pool.query(query, queryParams);
-        res.json(result.rows);
-    } catch (err) {
-        console.error('Error fetching cars by query:', err);
-        res.status(500).json({ error: 'Internal server error' });
+    // Validate price
+    if (!price || isNaN(price)) {
+      return res.status(400).json({ error: 'Invalid price parameter' });
     }
+
+    // Build SQL query dynamically
+    let query = `SELECT * FROM cars WHERE price <= $1`;
+    let params = [price];
+    let paramIndex = 2;
+
+    if (carType && carType !== '*') {
+      query += ` AND cartype = $${paramIndex}`;
+      params.push(carType);
+      paramIndex++;
+    }
+
+    if (attributeArray.length > 0) {
+      query += ` AND attributes @> $${paramIndex}`;
+      params.push(attributeArray);
+    }
+
+    const result = await pool.query(query, params);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No matching cars found' });
+    }
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching cars:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
+
 
 module.exports = router;
