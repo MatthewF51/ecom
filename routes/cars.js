@@ -33,9 +33,11 @@ router.get('/:id', async (req, res) => {
 // Route: Fetch cars by query
 router.get('/:types/:atts/:price', async (req, res) => {
   try {
-    const typse = req.params.types;
+    const types = req.params.types;
 	const atts = req.params.atts;   
 	const price = req.params.price;
+	
+	alert(atts);
 	
 	// Build conditions
 	let carTypes = types.map(type => `cartype = '${carTypes}'`).join(' OR ');
@@ -55,3 +57,4 @@ router.get('/:types/:atts/:price', async (req, res) => {
 });
 
 module.exports = router;
+
