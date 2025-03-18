@@ -63,7 +63,7 @@
     </div>
 
     <!-- Submit Button -->
-    <button type="submit" class="submit-btn" onsubmit="findCars()">Search Cars</button>
+    <button type="submit" class="submit-btn">Search Cars</button>
   </form>
   </section>
 
@@ -96,33 +96,33 @@
   
     AOS.init();
 	
-
+	// Helper function: Get a query parameter by name
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
 	
 	async function initialCars() {
 		const response = await fetch("/api/cars");
         const cars = await response.json();	
 		loadCars(cars);
-		alert('Changes Added3!');
+		alert('Changes Added4!');
+		findCars()
 	}
 	
 	async function findCars() {
-		const form = document.getElementById('searchForm');
 		try {
-			// Grab the input values
-			const selectedCarTypes = Array.from(
-			  document.querySelectorAll('input[name="car_type"]:checked')
-			).map(cb => cb.value);
-
-			const selectedAttributes = Array.from(
-			  document.querySelectorAll('input[name="car_attribute"]:checked')
-			).map(cb => cb.value);
-
-			const price = document.getElementById('price').value;
+		
+			const car_types = getQueryParam('car_type');
+			const car_attributes = getQueryParam('car_attributes');
+			const price = getQueryParam('price');
 			
 			// URL encode each value (important!)
-			const encodedTypes = encodeURIComponent(selectedCarTypes);
-			const encodedAtts = encodeURIComponent(selectedAttributes);
+			const encodedTypes = encodeURIComponent(car_types);
+			const encodedAtts = encodeURIComponent(car_attributes);
 			const encodedPrice = encodeURIComponent(price);
+			
+			alert(car_types);
 
 			const response = await fetch(`/api/cars/${encodedTypes}/${encodedAtts}/${encodedPrice}`);	
 			const cars = await response.json();
