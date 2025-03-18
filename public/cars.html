@@ -34,7 +34,7 @@
           <label><input type="checkbox" name="car_type" value="Saloon">Saloon</label>
           <label><input type="checkbox" name="car_type" value="Coupe">Coupe</label>
           <label><input type="checkbox" name="car_type" value="Supercar">Supercar</label>
-          <label><input type="checkbox" name="car_type" value="Any">Any</label>
+          <label><input type="checkbox" name="car_type" value="Any" checked>Any</label>
         </div>
       </div>
 
@@ -49,7 +49,7 @@
           <label><input type="checkbox" name="car_attribute" value="two-seater">2-Seater</label>
           <label><input type="checkbox" name="car_attribute" value="five-seater">5-Seater</label>
           <label><input type="checkbox" name="car_attribute" value="seven-seater">7-Seater</label>
-          <label><input type="checkbox" name="car_attribute" value="Any">Any</label>
+          <label><input type="checkbox" name="car_attribute" value="Any" checked>Any</label>
         </div>
       </div>
 
@@ -78,59 +78,55 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
-  
+    
+    let allCars = []; // Store all cars for filtering
+
     function updateValue(val) {
       document.getElementById("rangeValue").textContent = 
         new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(val);
     }
-  
-    async function findCars(event) {
-      event.preventDefault();
-  
+
+    async function fetchCars() {
       try {
-        const form = document.getElementById('searchForm');
-        const formData = new FormData(form);
-    
-        let carType = formData.getAll('car_type').join(',');
-        let attributes = formData.getAll('car_attribute').join(',');
-        let price = formData.get('price') || 3000000; // Default max price
-  
-        // If no filters are selected, fetch all cars
-        if (!carType && !attributes && !price) {
-          const response = await fetch("/api/cars");
-          const cars = await response.json();
-          return loadCars(cars);
-        }
-    
-        // Build query parameters correctly
-        const queryParams = new URLSearchParams({
-          carType: carType || '*',
-          attributes: attributes || '',
-          price: price
-        });
-  
-        const response = await fetch(`/api/cars/query?${queryParams}`);
-  
-        if (!response.ok) {
-          throw new Error('API request failed');
-        }
-  
-        const cars = await response.json();
-        loadCars(cars);
+        const response = await fetch("/api/cars");
+        allCars = await response.json();
+        loadCars(allCars); // Load all cars initially
       } catch (error) {
         console.error('Error fetching cars:', error);
       }
     }
+
+    function findCars(event) {
+      event.preventDefault();
+
+      const form = document.getElementById('searchForm');
+      const formData = new FormData(form);
   
-    async function loadCars(cars) {
+      let selectedCarTypes = formData.getAll('car_type');
+      let selectedAttributes = formData.getAll('car_attribute');
+      let maxPrice = parseFloat(formData.get('price')) || 3000000;
+
+      // Filter logic
+      let filteredCars = allCars.filter(car => {
+        let matchesType = selectedCarTypes.includes("Any") || selectedCarTypes.includes(car.cartype);
+        let matchesAttributes = selectedAttributes.includes("Any") || selectedAttributes.every(attr => car.attributes.includes(attr));
+        let matchesPrice = car.price <= maxPrice;
+
+        return matchesType && matchesAttributes && matchesPrice;
+      });
+
+      loadCars(filteredCars);
+    }
+
+    function loadCars(cars) {
       const container = document.getElementById('carsContainer');
       container.innerHTML = "";
-      
-      if (!Array.isArray(cars) || cars.length === 0) {
+
+      if (cars.length === 0) {
         container.innerHTML = '<p>No cars available.</p>';
         return;
       }
-      
+
       cars.forEach(car => {
         const card = document.createElement('div');
         card.className = 'car-card';
@@ -145,16 +141,9 @@
         container.appendChild(card);
       });
     }
-  
+
     document.getElementById('searchForm').addEventListener('submit', findCars);
-  
-    // Load all cars by default on page load
-    window.addEventListener('DOMContentLoaded', async () => {
-      const response = await fetch("/api/cars");
-      const cars = await response.json();
-      loadCars(cars);
-    });
+    window.addEventListener('DOMContentLoaded', fetchCars); // Fetch cars on page load
   </script>
-  
 </body>
 </html>
