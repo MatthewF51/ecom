@@ -96,6 +96,12 @@
   
     AOS.init();
 	
+	 // Helper function: Get a query parameter by name
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+	
 	async function initialCars() {
 		const response = await fetch("/api/cars");
         const cars = await response.json();	
@@ -120,20 +126,14 @@
       document.querySelectorAll('input[name="car_attribute"]:checked')
     ).map(cb => cb.value);
 
-    const selectedPrice = document.getElementById('price').value;
+    const price = document.getElementById('price').value;
 
     // Build conditions
     let types = selectedCarTypes.map(type => `cartype = '${type}'`).join(' OR ');
 
     let atts = selectedAttributes.map(att => `'${att}'`).join(',');
 	
-
-    // Compose the query string
-    const sqlQuery = `SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price <= ${selectedPrice}`;
-	
-	alert(sqlQuery);
-	
-    const response = await fetch(`/api/cars/query/${sqlQuery}`);
+    const response = await fetch(`/api/cars/${types}/${atts}/${price}`);
     const cars = await response.json();
 	loadCars(cars);
 	  
