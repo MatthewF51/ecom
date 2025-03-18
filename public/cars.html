@@ -103,7 +103,7 @@
 	
 	async function findCars() {
 		try {
-			alert('Changes 9 Added!')
+			alert('Changes 10 Added!')
 			const car_types = getQueryParam('car_type');
 			const car_attributes = getQueryParam('car_attributes');
 			const price = getQueryParam('price');
@@ -114,9 +114,10 @@
 				loadCars(cars);
 			} else {
 			
-			const params = {carType: car_types, attributes: car_attributes, price: price}
+				const params = {carType: car_types, attributes: car_attributes, price: price}
 				const response = await fetch(`/api/cars/query?params.toString()`);	
 				let cars = await response.json();
+				alert(params.carType, params.price);
 				loadCars(cars);
 			};
 		  
