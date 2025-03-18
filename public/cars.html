@@ -142,9 +142,13 @@
       });
     }
 	
-	function updatePreference(carID){
+	function updatePreference(carId){
 	
-		window.location.href="carDetails.html?id=${carID}";
+		const response = await fetch(`/api/cars/${carId}`);
+        const car = await response.json();
+		
+		
+		window.location.href=`carDetails.html?id=${carId}`;
 	}
 
     document.getElementById('searchForm').addEventListener('submit', findCars);
