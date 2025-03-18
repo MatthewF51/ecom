@@ -116,8 +116,6 @@
 			} else {
 			
 			const params = {carType: car_types, attributes: car_attributes, price: price}
-
-  try {
 				const response = await fetch(`/api/cars/query?params.toString()`);	
 				let cars = await response.json();
 				loadCars(cars);
