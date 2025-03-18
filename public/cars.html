@@ -49,7 +49,6 @@
         <label><input type="checkbox" id="TwoSeater" name="car_attribute" value="two-seater">2-Seater</label>
         <label><input type="checkbox" id="FiveSeater" name="car_attribute" value="five-seater">5-Seater</label>
         <label><input type="checkbox" id="SevenSeater" name="car_attribute" value="seven-seater">7-Seater</label>
-        <label><input type="checkbox" id="AnyAttribute" name="car_attribute" value="*">Any</label>
       </div>
     </div>
 
@@ -104,7 +103,7 @@
 	
 	async function findCars() {
 		try {
-			alert('Changes 8 Added!')
+			alert('Changes 9 Added!')
 			const car_types = getQueryParam('car_type');
 			const car_attributes = getQueryParam('car_attributes');
 			const price = getQueryParam('price');
@@ -133,7 +132,6 @@
         
         if (cars.length === 0) {
           container.innerHTML = '<p>No cars available.</p>';
-		  alert('Naw');
           return;
         }
         
