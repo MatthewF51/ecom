@@ -61,47 +61,31 @@ router.get('/:id', async (req, res) => {
 // Route: Fetch cars by query
 router.get('/query', async (req, res) => {
   try {
-    let { carType, attributes, price } = req.query;
+    const { carType, attributes, price } = req.query;
+    const attributeArray = attributes ? attributes.split(',') : [];
 
-    let query = `SELECT * FROM cars WHERE price <= $1`;
-    let params = [price];
-    let paramIndex = 2;
+    const query = `
+      SELECT * FROM cars
+      WHERE ($1 = '*' OR carType = $1)
+        AND (array_length($2, 1) IS NULL OR attributes::text LIKE ANY ($2))
+        AND price <= $3
+    `;
 
-    // Handle carType filter (allow "Any" to return all types)
-    if (carType && carType !== "Any") {
-      query += ` AND cartype = $${paramIndex}`;
-      params.push(carType);
-      paramIndex++;
-    }
-
-    // Handle attributes filter
-    if (attributes && attributes !== "Any") {
-      const attributeArray = attributes.split(',');
-      query += ` AND attributes && $${paramIndex}::TEXT[]`;
-      params.push(attributeArray);
-    }
-
-    query += ` ORDER BY array_length(attributes, 1) DESC`; // Rank by number of matching attributes
-
-    // Log the query and parameters for debugging
-    console.log("Executing SQL Query:");
-    console.log("Query:", query);
-    console.log("Parameters:", params);
+    const params = [carType, attributeArray.map(attr => `%${attr}%`), price];
 
     const result = await pool.query(query, params);
     
     if (result.rows.length === 0) {
-      console.log("No matching cars found.");
-      return res.status(404).json({ error: 'No matching cars found' });
+      res.status(404).json({ error: 'No matching cars found' });
+    } else {
+      res.json(result.rows);
     }
-
-    console.log("Query Results:", result.rows);
-    res.json(result.rows);
   } catch (err) {
     console.error('Error fetching cars:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 module.exports = router;
