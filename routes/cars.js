@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Route: Fetch cars by query
-router.post('/query', async (req, res) => {
+router.get('/query', async (req, res) => {
   try {
     const { search } = req.body;
     alert(search);
