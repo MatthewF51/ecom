@@ -99,8 +99,8 @@
 	async function initialCars() {
 		const response = await fetch(`/api/cars`);
         const cars = await response.json();
-		alert('Changes Added!')
-		findCars()
+		alert('Changes Added!');
+		findCars();
 		loadCars(cars);
 	}
 	
@@ -131,8 +131,6 @@
     // Compose the query string
     const query = `SELECT * FROM cars WHERE attributes @> ARRAY[${atts}] AND ${types} AND price <= ${selectedPrice}`;
 	
-	alert(query);
-
     fetch('/api/cars/query', {
 	  method: 'POST',
 	  headers: {
