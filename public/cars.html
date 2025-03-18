@@ -63,7 +63,7 @@
     </div>
 
     <!-- Submit Button -->
-    <button type="submit" class="submit-btn">Search Cars</button>
+    <button type="submit" class="submit-btn" onsubmit="findCars()">Search Cars</button>
   </form>
   </section>
 
@@ -102,11 +102,36 @@
 		const response = await fetch("/api/cars");
         const cars = await response.json();	
 		loadCars(cars);
-		alert('Changes Added2!');
-	
+		alert('Changes Added3!');
 	}
 	
-	
+	async function findCars() {
+		const form = document.getElementById('searchForm');
+		try {
+			// Grab the input values
+			const selectedCarTypes = Array.from(
+			  document.querySelectorAll('input[name="car_type"]:checked')
+			).map(cb => cb.value);
+
+			const selectedAttributes = Array.from(
+			  document.querySelectorAll('input[name="car_attribute"]:checked')
+			).map(cb => cb.value);
+
+			const price = document.getElementById('price').value;
+			
+			// URL encode each value (important!)
+			const encodedTypes = encodeURIComponent(selectedCarTypes);
+			const encodedAtts = encodeURIComponent(selectedAttributes);
+			const encodedPrice = encodeURIComponent(price);
+
+			const response = await fetch(`/api/cars/${encodedTypes}/${encodedAtts}/${encodedPrice}`);	
+			const cars = await response.json();
+			loadCars(cars);
+		  
+		} catch (error) {
+		  console.error('Error fetching cars:', error);
+		};
+	}
 
 
     async function loadCars(cars) {
