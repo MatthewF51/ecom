@@ -102,14 +102,6 @@
       return urlParams.get(param);
     }
 	
-	async function initialCars() {
-		const response = await fetch("/api/cars");
-        const cars = await response.json();	
-		loadCars(cars);
-		alert('Changes Added4!');
-		findCars()
-	}
-	
 	async function findCars() {
 		try {
 		
@@ -117,16 +109,23 @@
 			const car_attributes = getQueryParam('car_attributes');
 			const price = getQueryParam('price');
 			
-			// URL encode each value (important!)
-			const encodedTypes = encodeURIComponent(car_types);
-			const encodedAtts = encodeURIComponent(car_attributes);
-			const encodedPrice = encodeURIComponent(price);
+			if (!price){
+				const response = await fetch("/api/cars");
+				const cars = await response.json();	
+				loadCars(cars)
+			} else {
 			
-			alert(car_types);
+				// URL encode each value (important!)
+				const encodedTypes = encodeURIComponent(car_types);
+				const encodedAtts = encodeURIComponent(car_attributes);
+				const encodedPrice = encodeURIComponent(price);
+				
+				alert(car_types);
 
-			const response = await fetch(`/api/cars/${encodedTypes}/${encodedAtts}/${encodedPrice}`);	
-			const cars = await response.json();
-			loadCars(cars);
+				const response = await fetch(`/api/cars/${encodedTypes}/${encodedAtts}/${encodedPrice}`);	
+				cars = await response.json();
+				loadCars(cars);
+			};
 		  
 		} catch (error) {
 		  console.error('Error fetching cars:', error);
@@ -163,7 +162,7 @@
       }
     }
     
-    window.addEventListener('DOMContentLoaded', initialCars);
+    window.addEventListener('DOMContentLoaded', findCars);
   </script>
 </body>
 </html>
