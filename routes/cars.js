@@ -7,7 +7,6 @@ const pool = require('../db');
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM cars');
-	alert('BOO');
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching cars:', err);
@@ -32,20 +31,23 @@ router.get('/:id', async (req, res) => {
 });
 
 // Route: Fetch cars by query
-router.get('/:types/:atts/:price', async (req, res) => {
+router.get('/query', async (req, res) => {
   try {
-    const types = req.params.types;
-	const atts = req.params.atts;   
-	const price = req.params.price;
-	
-	alert(atts);
-	
-	// Build conditions
-	let carTypes = types.map(type => `cartype = '${carTypes}'`).join(' OR ');
+	const { carType, attributes, price } = req.query;
 
-	let attributes = atts.map(att => `'${att}'`).join(',');
-	
-    const result = await pool.query('SELECT * FROM cars WHERE (${carTypes}) AND (attributes @> ARRAY[${attributes}]) AND (price <= ${price})', [carTypes,attributes,price]);
+	const attributeArray = attributes.split(',');
+
+  try {
+    const query = `
+      SELECT * FROM cars
+      WHERE car_type = $1
+        AND attributes && $2
+        AND price <= $3
+    `;
+
+    const params = [carType, attributeArray, price];
+
+    const result = await pool.query(query, params);
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Cars not found' });
     } else {
