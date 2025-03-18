@@ -83,17 +83,25 @@ router.get('/query', async (req, res) => {
 
     query += ` ORDER BY array_length(attributes, 1) DESC`; // Rank by number of matching attributes
 
+    // Log the query and parameters for debugging
+    console.log("Executing SQL Query:");
+    console.log("Query:", query);
+    console.log("Parameters:", params);
+
     const result = await pool.query(query, params);
     
     if (result.rows.length === 0) {
+      console.log("No matching cars found.");
       return res.status(404).json({ error: 'No matching cars found' });
     }
 
+    console.log("Query Results:", result.rows);
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching cars:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 module.exports = router;
