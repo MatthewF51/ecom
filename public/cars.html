@@ -162,7 +162,7 @@
 	  console.log("Attributes:", attributes);
 
 	  try {
-	        const response = await fetch("/api/cars");
+	        const response = await fetch("/api/update");
 	        allCars = await response.json();
 	        console.log(allCars); // Load all cars initially
 	      } catch (error) {
