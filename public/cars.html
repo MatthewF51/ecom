@@ -119,44 +119,49 @@
     }
 
     function loadCars(cars) {
-      const container = document.getElementById('carsContainer');
-      container.innerHTML = "";
-
-      if (cars.length === 0) {
-        container.innerHTML = '<p>No cars available.</p>';
-        return;
-      }
-
-      cars.forEach(car => {
-        const card = document.createElement('div');
-        card.className = 'car-card';
-        card.innerHTML = `
-          <img src="${car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg'}" alt="${car.name}" />
-          <div class="car-info">
-            <h4>${car.name}</h4>
-            <p>${car.description}</p>
-            <button onclick="updatePreference(${car.id},'${car.cartype}', JSON.parse('${JSON.stringify(car.attributes)}'))">
-  		View Details
-    		</button>
-
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    } 
+	  const container = document.getElementById('carsContainer');
+	  container.innerHTML = "";
 	
-	async function updatePreference(carId, type, attributes){
+	  if (cars.length === 0) {
+	    container.innerHTML = '<p>No cars available.</p>';
+	    return;
+	  }
 	
-		try {
-			console.log(attributes);
-			const response = await fetch(`/api/cars`);
-			const car = await response.json();
-		} catch (error) {
-			console.error('Error fetching cars:', error);
-		}
-		
-		
-		window.location.href=`carDetails.html?id=${carId}`;
+	  cars.forEach(car => {
+	    const card = document.createElement('div');
+	    card.className = 'car-card';
+	    card.innerHTML = `
+	      <img src="${car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg'}" alt="${car.name}" />
+	      <div class="car-info">
+	        <h4>${car.name}</h4>
+	        <p>${car.description}</p>
+	        <button data-id="${car.id}" data-type="${car.cartype}" data-attributes='${JSON.stringify(car.attributes)}' class="view-details">
+	          View Details
+	        </button>
+	      </div>
+	    `;
+	    container.appendChild(card);
+	  });
+	
+	  // Attach event listeners
+	  document.querySelectorAll('.view-details').forEach(button => {
+	    button.addEventListener('click', (event) => {
+	      const carId = event.target.getAttribute('data-id');
+	      const carType = event.target.getAttribute('data-type');
+	      const carAttributes = JSON.parse(event.target.getAttribute('data-attributes'));
+	
+	      updatePreference(carId, carType, carAttributes);
+	    });
+	  });
+	}
+
+	
+	async function updatePreference(carId, type, attributes) {
+	  console.log("Car ID:", carId);
+	  console.log("Car Type:", type);
+	  console.log("Attributes:", attributes);
+	
+	  window.location.href = `carDetails.html?id=${carId}`;
 	}
 
 
