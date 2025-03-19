@@ -145,7 +145,7 @@
 	async function updatePreference(carId, type, attributes){
 	
 		try {
-			const response = await fetch(`/api/update/${carId}`);
+			const response = await fetch(`/api/cars/${carId}`);
 			const car = await response.json();
 		} catch (error) {
 			console.error('Error fetching cars:', error);
