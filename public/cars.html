@@ -135,7 +135,10 @@
           <div class="car-info">
             <h4>${car.name}</h4>
             <p>${car.description}</p>
-            <button onclick="updatePreference(${car.id},${car.car_type},${car.attributes})">View Details</button>
+            <button onclick="updatePreference(${car.id},'${car.car_type}', JSON.parse('${JSON.stringify(car.attributes)}'))">
+  		View Details
+    		</button>
+
           </div>
         `;
         container.appendChild(card);
