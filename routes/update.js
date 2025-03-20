@@ -5,8 +5,16 @@ const pool = require('../db');
 
 console.log("Router file loaded!");  // This should show on server startup.
 
-router.post('/', async (req, res) => {
-  console.log("POST /api/update hit!");
+router.get('/', async (req, res) => {
+  console.log("GET /api/update hit!");
+
+  const user = req.query.user;        // This will be undefined unless you pass ?user=...
+  const carId = req.query.id;         // You have id=4 in your URL
+  const type = req.query.type;        // type=Saloon
+  const attributes = req.query.attributes; // attributes=fast,luxurious,four-door,five-seater
+
+  console.log("Params:", { user, carId, type, attributes });
+
 
   const { user, carId, type, attributes } = req.body;
   console.log("Request body:", req.body);
