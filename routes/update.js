@@ -25,13 +25,12 @@ router.post('/', async (req, res) => {
 		
 		if (userId == ""){
 			const rResult = await pool.query(`INSERT INTO user_preferences (
-    user_id,
+    user_id
  
 ) VALUES (
 	$1
 );`,[userId]);
 
-	  alert(rResult.rows[0]);
 		}
 	}
 	res.redirect(`/carDetails.html?user=${user}&id=${carId}`);
