@@ -36,6 +36,8 @@ app.use('/api/sales', salesRouter);
 const contactRouter = require('./routes/contact');
 app.use('/api/contact', contactRouter);
 
+const updateRouter = require('./routes/update');
+app.use('/api/update', updateRouter);
 
 // Endpoint to fetch current user info (for autofilling contact page)
 app.get('/api/user', (req, res) => {
