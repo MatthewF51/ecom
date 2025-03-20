@@ -2,24 +2,24 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// ✅ 1. Recommend cars FIRST
+// 1. Recommend cars FIRST
 router.get('/recommend', async (req, res) => {
   try {
     const userId = parseInt(req.query.userId);
     console.log("➡️ Received /recommend request for userId:", userId);
 
     if (isNaN(userId)) {
-      console.error("❌ userId is missing or invalid:", req.query.userId);
+      console.error("userId is missing or invalid:", req.query.userId);
       return res.status(400).json({ error: 'Missing or invalid userId' });
     }
 
     const userPrefsResult = await pool.query(`SELECT * FROM user_preferences`);
-    console.log(`✅ Loaded ${userPrefsResult.rows.length} user preference records`);
+    console.log(`Loaded ${userPrefsResult.rows.length} user preference records`);
 
     const prefs = userPrefsResult.rows.find(user => user.user_id === userId);
 
     if (!prefs) {
-      console.warn("❗ No user preferences found for userId:", userId);
+      console.warn("No user preferences found for userId:", userId);
       return res.status(404).json({ error: 'User preferences not found' });
     }
 
