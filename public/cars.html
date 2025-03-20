@@ -63,6 +63,7 @@
       </div>
 
       <button type="submit" class="submit-btn">Search Cars</button>
+      <button type="submit" id="reco" class="submit-btn">Recommend me Cars</button>
     </form>
   </section>
 
@@ -114,6 +115,23 @@
       try {
         const response = await fetch("/api/cars");
         allCars = await response.json();
+        loadCars(allCars, user);
+      } catch (error) {
+        console.error('Error fetching cars:', error);
+      }
+    }
+
+    async function recoCars(){
+
+       const user = getUser(); // Make sure user is available
+      if (!user) return; // Exit if no user
+      
+      try {
+        const response = await fetch("/api/cars");
+        allCars = await response.json();
+
+        
+        
         loadCars(allCars, user);
       } catch (error) {
         console.error('Error fetching cars:', error);
@@ -176,7 +194,7 @@
       });
     }
 
-    document.getElementById('searchForm').addEventListener('submit', findCars);
+    document.getElementById('reco').addEventListener('click', recoCars);
     window.addEventListener('DOMContentLoaded', fetchCars);
   </script>
 </body>
