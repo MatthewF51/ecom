@@ -106,15 +106,12 @@
 		// Update the link
 		link.href = url.toString();
 	}
- 
-     // Helper function: Get a query parameter by name
-     function getQueryParam(param) {
-       const urlParams = new URLSearchParams(window.location.search);
-       return urlParams.get(param);
-     }
+
  
      async function loadCarDetails() {
-       const carId = getQueryParam('id');
+	        const urlParams = new URLSearchParams(window.location.search);
+		const user = urlParams.get('user');	
+       const carId = urlParams.get('id');
        if (!carId) {
          document.getElementById('carSpecs').innerHTML = '<p>No car selected.</p>';
          return;
