@@ -30,7 +30,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Route: Fetch recommended cars for a user, ordered by preference scores
 router.get('/recommend', async (req, res) => {
   try {
     const userId = parseInt(req.query.userId);
@@ -42,34 +41,37 @@ router.get('/recommend', async (req, res) => {
       return res.status(400).json({ error: 'Missing or invalid userId' });
     }
 
-    // Get user preferences
+    // 1. Fetch ALL user preferences
     const userPrefsResult = await pool.query(`
-      SELECT *
-      FROM user_preferences
-      WHERE user_id = $1
-    `, [userId]);
+      SELECT * FROM user_preferences
+    `);
 
-    if (userPrefsResult.rows.length === 0) {
+    console.log(`✅ Loaded ${userPrefsResult.rows.length} user preference records`);
+
+    // 2. Find the current user's preferences in JS
+    const prefs = userPrefsResult.rows.find(user => user.user_id === userId);
+
+    if (!prefs) {
       console.warn("❗ No user preferences found for userId:", userId);
       return res.status(404).json({ error: 'User preferences not found' });
     }
 
-    const prefs = userPrefsResult.rows[0];
+    console.log("✅ Found preferences for user:", prefs);
 
-    // Extract user preferences with defaults
+    // Extract preferences with defaults
     const preferredCarTypes = prefs.preferred_car_types || [];
     const carTypeRatings = prefs.car_type_ratings || [];
     const viewedAttributes = prefs.viewed_attributes || [];
     const attributeRatings = prefs.attribute_ratings || [];
 
-    console.log("✅ User preferences loaded:", {
+    console.log("➡️ Preferences loaded:", {
       preferredCarTypes,
       carTypeRatings,
       viewedAttributes,
       attributeRatings
     });
 
-    // Validation to ensure lengths match
+    // Validate lengths
     if (preferredCarTypes.length !== carTypeRatings.length) {
       console.error("❌ Car type arrays mismatched lengths!", {
         preferredCarTypesLength: preferredCarTypes.length,
@@ -86,27 +88,26 @@ router.get('/recommend', async (req, res) => {
       return res.status(500).json({ error: 'Internal server error: Attribute preferences invalid' });
     }
 
-    // Fetch all cars
+    // 3. Fetch all cars
     const carsResult = await pool.query(`SELECT * FROM cars`);
     const cars = carsResult.rows;
 
     console.log(`✅ Fetched ${cars.length} cars from database`);
 
-    // Rank each car by score based on type & attributes
+    // 4. Rank cars
     const scoredCars = cars.map(car => {
       let score = 0;
 
       const carType = car.cartype;
       const carAttributes = car.attributes || [];
 
-      // Debugging for this car
       console.log("🔍 Scoring car:", {
         carId: car.id,
         carType,
         carAttributes
       });
 
-      // Check car type rating
+      // Match car type
       const typeIndex = preferredCarTypes.indexOf(carType);
       if (typeIndex >= 0) {
         const typeScore = carTypeRatings[typeIndex];
@@ -114,20 +115,15 @@ router.get('/recommend', async (req, res) => {
         score += typeScore;
       }
 
-      // Sum attribute ratings for matching attributes
-      let attributeScore = 0;
+      // Match attributes
       carAttributes.forEach(attr => {
         const attrIndex = viewedAttributes.indexOf(attr);
         if (attrIndex >= 0) {
-          const attrRating = attributeRatings[attrIndex];
-          console.log(`✅ Attribute match found! Attribute: ${attr} Score: ${attrRating}`);
-          attributeScore += attrRating;
+          const attrScore = attributeRatings[attrIndex];
+          console.log(`✅ Attribute match found! Attribute: ${attr} Score: ${attrScore}`);
+          score += attrScore;
         }
       });
-
-      score += attributeScore;
-
-      console.log(`✅ Final score for car ${car.id}: ${score}`);
 
       return {
         ...car,
@@ -135,18 +131,19 @@ router.get('/recommend', async (req, res) => {
       };
     });
 
-    // Sort by preference score descending
+    // 5. Sort by preference score (descending)
     scoredCars.sort((a, b) => b.preferenceScore - a.preferenceScore);
 
-    console.log("✅ Top cars after scoring:", scoredCars.slice(0, 5));
+    console.log("✅ Sorted cars by preference score");
+    console.log("🔝 Top 5 cars:", scoredCars.slice(0, 5));
 
     res.json(scoredCars);
-
   } catch (err) {
-    console.error('🔥 Error executing recommendation filtering:', err);
+    console.error("🔥 Error executing recommendation filtering:", err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 module.exports = router;
