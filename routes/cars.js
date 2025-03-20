@@ -30,49 +30,92 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Route: Fetch cars by query (Filtered in JS)
-router.get('/query', async (req, res) => {
+// Route: Fetch recommended cars for a user, ordered by preference scores
+router.get('/recommend', async (req, res) => {
   try {
-    let { carType, attributes, price } = req.query;
+    const userId = parseInt(req.query.userId);
 
-    // Fetch all cars first
-    const result = await pool.query(`SELECT * FROM cars`);
-    let cars = result.rows;
-
-    console.log("Fetched all cars:", cars.length);
-
-    // Convert attributes into an array (or empty if not provided)
-    const attributeArray = attributes ? attributes.split(',') : [];
-
-    // Filter in JavaScript instead of SQL
-    let filteredCars = cars.filter(car => {
-      // Check price condition
-      if (price && car.price > Number(price)) return false;
-
-      // Check carType condition (ignore if `*`)
-      if (carType !== '*' && carType && car.cartype !== carType) return false;
-
-      // Check attributes (only if attributes are provided)
-      if (attributeArray.length > 0) {
-        const carAttributes = car.attributes || [];
-        if (!attributeArray.every(attr => carAttributes.includes(attr))) return false;
-      }
-
-      return true;
-    });
-
-    console.log("Filtered cars:", filteredCars.length);
-
-    if (filteredCars.length === 0) {
-      return res.status(404).json({ error: 'No cars found matching your criteria' });
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Missing or invalid userId' });
     }
 
-    res.json(filteredCars);
-    
+    // Get user preferences
+    const userPrefsResult = await pool.query(`
+      SELECT *
+      FROM user_preferences
+      WHERE user_id = $1
+    `, [userId]);
+
+    if (userPrefsResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User preferences not found' });
+    }
+
+    const prefs = userPrefsResult.rows[0];
+
+    // Extract user preferences
+    const preferredCarTypes = prefs.preferred_car_types;
+    const carTypeRatings = prefs.car_type_ratings;
+    const viewedAttributes = prefs.viewed_attributes;
+    const attributeRatings = prefs.attribute_ratings;
+
+    console.log("User preferences loaded:", {
+      preferredCarTypes,
+      carTypeRatings,
+      viewedAttributes,
+      attributeRatings
+    });
+
+    // Fetch all cars
+    const carsResult = await pool.query(`SELECT * FROM cars`);
+    let cars = carsResult.rows;
+
+    console.log("Total cars fetched:", cars.length);
+
+    // Rank each car by score based on type & attributes
+    const scoredCars = cars.map(car => {
+      let score = 0;
+
+      // Check car type rating
+      const typeIndex = preferredCarTypes.indexOf(car.cartype);
+      if (typeIndex >= 0) {
+        score += carTypeRatings[typeIndex];
+      }
+
+      // Sum attribute ratings for matching attributes
+      const carAttributes = car.attributes || [];
+      let attributeScore = 0;
+
+      carAttributes.forEach(attr => {
+        const attrIndex = viewedAttributes.indexOf(attr);
+        if (attrIndex >= 0) {
+          attributeScore += attributeRatings[attrIndex];
+        }
+      });
+
+      score += attributeScore;
+
+      return {
+        ...car,
+        preferenceScore: score
+      };
+    });
+
+    // Sort by preference score descending
+    scoredCars.sort((a, b) => b.preferenceScore - a.preferenceScore);
+
+    console.log("Top cars after scoring:", scoredCars.slice(0, 5));
+
+    if (scoredCars.length === 0) {
+      return res.status(404).json({ error: 'No cars found for user preferences' });
+    }
+
+    res.json(scoredCars);
+
   } catch (err) {
     console.error('Error executing recommendation filtering:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 module.exports = router;
