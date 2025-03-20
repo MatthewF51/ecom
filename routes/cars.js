@@ -43,7 +43,7 @@ router.get('/recommend', async (req, res) => {
 
     // 1. Fetch ALL user preferences
     const userPrefsResult = await pool.query(`
-      SELECT * FROM user_preferences
+      SELECT * FROM user_preferences;
     `);
 
     console.log(`✅ Loaded ${userPrefsResult.rows.length} user preference records`);
