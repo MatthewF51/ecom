@@ -46,30 +46,47 @@ router.get('/', async (req, res) => {
     if (result.rows.length === 0) {
       // 2. User doesn't exist, insert new preference row
       console.log("Inserting new user preferences...");
+// Create ratings array matching number of attributes
+const attributeRatings = attributes.map(() => 1);
 
-      await pool.query(`
-        INSERT INTO user_preferences (
-          user_id,
-          viewed_cars,
-          viewed_attributes,
-          attribute_ratings,
-          preferred_car_types,
-          car_type_ratings
-        )
-        VALUES (
-          $1,
-          ARRAY[$2]::INTEGER[],
-          $3::TEXT[],
-          ARRAY[1]::INTEGER[],
-          ARRAY[$4]::TEXT[],
-          ARRAY[1]::INTEGER[]
-        )
-      `, [
-        userId,
-        carId,
-        attributes,  // This must be an array of strings
-        [carType]    // Wrap carType in an array to insert
-      ]);
+// Wrap carType in an array
+const preferredCarTypes = [carType];
+
+// Always log what you're about to insert!
+console.log("Inserting:", {
+  userId,
+  viewedCars: [carId],
+  attributes,
+  attributeRatings,
+  preferredCarTypes,
+  carTypeRatings: [1]
+});
+
+await pool.query(`
+  INSERT INTO user_preferences (
+    user_id,
+    viewed_cars,
+    viewed_attributes,
+    attribute_ratings,
+    preferred_car_types,
+    car_type_ratings
+  )
+  VALUES (
+    $1,
+    $2::INTEGER[],
+    $3::TEXT[],
+    $4::INTEGER[],
+    $5::TEXT[],
+    $6::INTEGER[]
+  )
+`, [
+  userId,
+  [carId],               // viewed_cars as array
+  attributes,            // array of attributes
+  attributeRatings,      // array of 1s, same length as attributes
+  preferredCarTypes,     // carType wrapped in array
+  [1]                    // car_type_ratings starts with 1
+]);
 
       console.log("New user preference inserted.");
     } else {
