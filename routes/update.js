@@ -6,7 +6,7 @@ const pool = require('../db');
 router.post('/', async (req, res) => {
   const { user, carId, type, attributes } = req.body;
   try {
-	console.log("Before UP")   
+	console.log("Before UP");
     const result = await pool.query(`SELECT user FROM user_preferences`);
 	let userId = "";
 	if (result.rows.length === 0) {
@@ -24,6 +24,7 @@ router.post('/', async (req, res) => {
 		}
 		
 		if (userId == ""){
+			console.log("Before insert");
 			const rResult = await pool.query(`INSERT INTO user_preferences (
     user_id
  
