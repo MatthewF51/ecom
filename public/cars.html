@@ -63,8 +63,10 @@
       </div>
 
       <button type="submit" class="submit-btn">Search Cars</button>
-      <button type="submit" id="reco" class="submit-btn">Recommend me Cars</button>
     </form>
+
+    <!-- Recommend Button OUTSIDE the form -->
+    <button id="reco" class="submit-btn">Recommend me Cars</button>
   </section>
 
   <section class="cars-page">
@@ -83,7 +85,7 @@
     let allCars = [];
 
     function updateValue(val) {
-      document.getElementById("rangeValue").textContent = 
+      document.getElementById("rangeValue").textContent =
         new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(val);
     }
 
@@ -109,9 +111,9 @@
     }
 
     async function fetchCars() {
-      const user = getUser(); // Make sure user is available
-      if (!user) return; // Exit if no user
-      
+      const user = getUser();
+      if (!user) return;
+
       try {
         const response = await fetch("/api/cars");
         allCars = await response.json();
@@ -121,20 +123,21 @@
       }
     }
 
-    async function recoCars(){
+    async function recoCars(event) {
+      event.preventDefault();
 
-       const user = getUser(); // Make sure user is available
-      if (!user) return; // Exit if no user
-      
+      const user = getUser();
+      if (!user) return;
+
       try {
-        const response = await fetch("/api/cars");
-        allCars = await response.json();
+        const response = await fetch(`/api/cars/recommend?userId=${user}`);
+        const recommendedCars = await response.json();
 
-        
-        
-        loadCars(allCars, user);
+        console.log('Recommended cars:', recommendedCars);
+
+        loadCars(recommendedCars, user);
       } catch (error) {
-        console.error('Error fetching cars:', error);
+        console.error('Error fetching recommended cars:', error);
       }
     }
 
@@ -194,7 +197,9 @@
       });
     }
 
+    // Event listeners
     document.getElementById('reco').addEventListener('click', recoCars);
+    document.getElementById('searchForm').addEventListener('submit', findCars);
     window.addEventListener('DOMContentLoaded', fetchCars);
   </script>
 </body>
