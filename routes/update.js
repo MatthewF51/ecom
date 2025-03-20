@@ -12,7 +12,7 @@ router.get('/:user/:carId/:type/:attributes', async (req, res) => {
     const result = await pool.query(`SELECT email FROM user_preferences`);
 	let user_id = "none";
 	if (result.rows.length != 0) {
-		for (let i = 0; i < result.rows.length; i++) {
+		for (let i = 0; i = result.rows.length; i++) {
 			
 			const check = result.rows[i];
 			const valid = await bcrypt.compare(user, check.email);
