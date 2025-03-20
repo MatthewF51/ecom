@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).send('Invalid email or password.');
     }
     req.session.user = user;
-    res.redirect('/');
+    res.redirect(`/?user=${user.user_id}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error during login.');
