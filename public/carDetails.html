@@ -66,6 +66,7 @@
      }
  
      async function loadCarDetails() {
+		const user = getQueryParam('user');
        const carId = getQueryParam('id');
        if (!carId) {
          document.getElementById('carSpecs').innerHTML = '<p>No car selected.</p>';
