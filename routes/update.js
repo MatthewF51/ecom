@@ -5,6 +5,7 @@ const pool = require('../db');
 // Route: Fetch a single car by ID
 router.get('/:user/:carId/:type/:attributes', async (req, res) => {
   try {
+	  console.error('Updating');
 	  const { user,carId,type,attributes } = req.params;
     const result = await pool.query(`SELECT email FROM user_preferences`);
 	let user_id = "none";
