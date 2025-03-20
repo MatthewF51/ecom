@@ -25,7 +25,6 @@
     <form id="searchForm" class="form-container">
       <h2>Find Your Car</h2>
 
-      <!-- Car Type Section -->
       <div class="section">
         <label>Select Car Type:</label>
         <div class="checkbox-group">
@@ -38,7 +37,6 @@
         </div>
       </div>
 
-      <!-- Attribute Section -->
       <div class="section">
         <label>Select Attributes:</label>
         <div class="checkbox-group">
@@ -53,7 +51,6 @@
         </div>
       </div>
 
-      <!-- Price Section -->
       <div class="section">
         <label>Maximum Price:</label>
         <div class="range-container">
@@ -65,7 +62,6 @@
       <button type="submit" class="submit-btn">Search Cars</button>
     </form>
 
-    <!-- Recommend Button OUTSIDE the form -->
     <button id="reco" class="submit-btn">Recommend me Cars</button>
   </section>
 
@@ -77,7 +73,7 @@
   <footer>
     <p>&copy; 2025 Speedy Sales. All rights reserved.</p>
   </footer>
-  
+
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
@@ -107,6 +103,7 @@
         link.href = url.toString();
       });
 
+      console.log("Current user:", user);
       return user;
     }
 
@@ -114,9 +111,13 @@
       const user = getUser();
       if (!user) return;
 
+      console.log("Fetching all cars...");
+
       try {
         const response = await fetch("/api/cars");
         allCars = await response.json();
+
+        console.log("All cars fetched:", allCars);
         loadCars(allCars, user);
       } catch (error) {
         console.error('Error fetching cars:', error);
@@ -129,11 +130,25 @@
       const user = getUser();
       if (!user) return;
 
+      console.log(`Requesting recommendations for userId=${user}`);
+
       try {
         const response = await fetch(`/api/cars/recommend?userId=${user}`);
+
+        if (!response.ok) {
+          console.error('Failed to fetch recommendations. Status:', response.status);
+          const errorText = await response.text();
+          console.error('Response:', errorText);
+          return;
+        }
+
         const recommendedCars = await response.json();
 
-        console.log('Recommended cars:', recommendedCars);
+        console.log('Recommended cars received:', recommendedCars);
+
+        if (!Array.isArray(recommendedCars) || recommendedCars.length === 0) {
+          console.warn("No recommended cars returned.");
+        }
 
         loadCars(recommendedCars, user);
       } catch (error) {
@@ -151,6 +166,8 @@
       const selectedAttributes = formData.getAll('car_attribute');
       const maxPrice = parseFloat(formData.get('price')) || 3000000;
 
+      console.log('Filtering cars with:', { selectedCarTypes, selectedAttributes, maxPrice });
+
       const filteredCars = allCars.filter(car => {
         const matchesType = selectedCarTypes.includes("Any") || selectedCarTypes.includes(car.cartype);
         const matchesAttributes = selectedAttributes.includes("Any") || selectedAttributes.every(attr => car.attributes.includes(attr));
@@ -159,6 +176,7 @@
         return matchesType && matchesAttributes && matchesPrice;
       });
 
+      console.log("Filtered cars:", filteredCars);
       const user = getUser();
       loadCars(filteredCars, user);
     }
@@ -166,6 +184,8 @@
     function loadCars(cars, user) {
       const container = document.getElementById('carsContainer');
       container.innerHTML = "";
+
+      console.log(`Loading ${cars.length} cars for user ${user}`);
 
       if (cars.length === 0) {
         container.innerHTML = '<p>No cars available.</p>';
@@ -176,7 +196,7 @@
         const card = document.createElement('div');
         card.className = 'car-card';
 
-        const attributesString = car.attributes.join(',');
+        const attributesString = car.attributes ? car.attributes.join(',') : '';
 
         card.innerHTML = `
           <img src="${car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg'}" alt="${car.name}" />
@@ -195,9 +215,10 @@
 
         container.appendChild(card);
       });
+
+      console.log("Cars loaded into DOM.");
     }
 
-    // Event listeners
     document.getElementById('reco').addEventListener('click', recoCars);
     document.getElementById('searchForm').addEventListener('submit', findCars);
     window.addEventListener('DOMContentLoaded', fetchCars);
