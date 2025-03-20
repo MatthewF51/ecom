@@ -12,7 +12,7 @@
   <header class="navbar">
     <h1>Speedy Cars</h1>
     <nav>
-      <button id="go(index)"><a>Home</a></button>
+      <a href="" id="home">Home</a>
       <a href="cars.html">Cars</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
@@ -78,6 +78,8 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
+	
+	document.getElementById('home').addEventListener('click', go('index'));
 	
 	function go(where){
 		window.location.href = `${where}.html?user=${user}`;
