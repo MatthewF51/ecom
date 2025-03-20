@@ -3,11 +3,11 @@ const router = express.Router();
 const pool = require('../db');
 
 // Route: Fetch a single car by ID
-router.get('/:user/:carId/:type/:attributes', async (req, res) => {
+router.get('/:user', async (req, res) => {
   try {
 	   
-	  const { user,carId,type,attributes } = req.params;
-    const result = await pool.query(`SELECT email FROM user_preferences`);
+	  const { user } = req.params;
+    const result = await pool.query(`SELECT email FROM users`);
 	
 			if (result.rows.length === 0) {
 				console.error('Error updating');
