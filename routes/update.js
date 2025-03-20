@@ -7,16 +7,34 @@ console.log("Router file loaded!");
 router.get('/', async (req, res) => {
   console.log("GET /update hit!");
 
-  const userId = parseInt(req.query.user);
-  const carId = parseInt(req.query.id);
+  const userIdRaw = req.query.user;
+  const carIdRaw = req.query.id;
   const carType = req.query.type;
-  const attributes = req.query.attributes ? req.query.attributes.split(",") : [];
+  const attributesRaw = req.query.attributes;
 
-  console.log("Params received:", { userId, carId, carType, attributes });
+  // Log raw params
+  console.log("Raw query params:", { userIdRaw, carIdRaw, carType, attributesRaw });
 
-  if (!userId || !carId || !carType) {
-    return res.status(400).json({ error: "Missing required parameters." });
+  // Validate and parse types
+  const userId = parseInt(userIdRaw);
+  const carId = parseInt(carIdRaw);
+  const attributes = attributesRaw ? attributesRaw.split(",") : [];
+
+  // Validate after parsing
+  if (isNaN(userId)) {
+    console.error("Invalid userId:", userIdRaw);
+    return res.status(400).json({ error: "Invalid userId parameter." });
   }
+  if (isNaN(carId)) {
+    console.error("Invalid carId:", carIdRaw);
+    return res.status(400).json({ error: "Invalid carId parameter." });
+  }
+  if (!carType) {
+    console.error("Missing carType");
+    return res.status(400).json({ error: "Missing carType parameter." });
+  }
+
+  console.log("Params parsed successfully:", { userId, carId, carType, attributes });
 
   try {
     // 1. Check if user preferences already exist
@@ -40,17 +58,17 @@ router.get('/', async (req, res) => {
         )
         VALUES (
           $1,
-          ARRAY[$2],
-          $3,
-          ARRAY[1],
-          ARRAY[$4],
-          ARRAY[1]
+          ARRAY[$2]::INTEGER[],
+          $3::TEXT[],
+          ARRAY[1]::INTEGER[],
+          ARRAY[$4]::TEXT[],
+          ARRAY[1]::INTEGER[]
         )
       `, [
         userId,
         carId,
-        attributes, // Pass as array from JS
-        carType
+        attributes,  // This must be an array of strings
+        [carType]    // Wrap carType in an array to insert
       ]);
 
       console.log("New user preference inserted.");
@@ -59,22 +77,19 @@ router.get('/', async (req, res) => {
       const userPrefs = result.rows[0];
       console.log("User preferences found:", userPrefs);
 
-      // Update viewed_cars if carId not in array
+      // viewed_cars
       if (!userPrefs.viewed_cars.includes(carId)) {
         await pool.query(`
           UPDATE user_preferences
           SET viewed_cars = array_append(viewed_cars, $1)
           WHERE user_id = $2
         `, [carId, userId]);
-
         console.log(`Added carId ${carId} to viewed_cars.`);
       }
 
-      // Update preferred_car_types and car_type_ratings
+      // preferred_car_types
       const carTypeIndex = userPrefs.preferred_car_types.indexOf(carType);
-
       if (carTypeIndex >= 0) {
-        // Increment rating at that index
         const newCarTypeRatings = [...userPrefs.car_type_ratings];
         newCarTypeRatings[carTypeIndex] += 1;
 
@@ -83,10 +98,8 @@ router.get('/', async (req, res) => {
           SET car_type_ratings[$1] = $2
           WHERE user_id = $3
         `, [carTypeIndex + 1, newCarTypeRatings[carTypeIndex], userId]);
-
         console.log(`Incremented rating for carType ${carType} to ${newCarTypeRatings[carTypeIndex]}.`);
       } else {
-        // Append new car type and rating
         await pool.query(`
           UPDATE user_preferences
           SET
@@ -94,14 +107,12 @@ router.get('/', async (req, res) => {
             car_type_ratings = array_append(car_type_ratings, 1)
           WHERE user_id = $2
         `, [carType, userId]);
-
         console.log(`Added new carType ${carType} with rating 1.`);
       }
 
-      // Update viewed_attributes and attribute_ratings
+      // viewed_attributes and attribute_ratings
       for (let attribute of attributes) {
         const attrIndex = userPrefs.viewed_attributes.indexOf(attribute);
-
         if (attrIndex >= 0) {
           const newAttrRatings = [...userPrefs.attribute_ratings];
           newAttrRatings[attrIndex] += 1;
@@ -111,7 +122,6 @@ router.get('/', async (req, res) => {
             SET attribute_ratings[$1] = $2
             WHERE user_id = $3
           `, [attrIndex + 1, newAttrRatings[attrIndex], userId]);
-
           console.log(`Incremented rating for attribute ${attribute} to ${newAttrRatings[attrIndex]}.`);
         } else {
           await pool.query(`
@@ -121,13 +131,11 @@ router.get('/', async (req, res) => {
               attribute_ratings = array_append(attribute_ratings, 1)
             WHERE user_id = $2
           `, [attribute, userId]);
-
           console.log(`Added new attribute ${attribute} with rating 1.`);
         }
       }
     }
 
-    // Redirect to carDetails page after updating preferences
     res.redirect(`/carDetails.html?user=${userId}&id=${carId}`);
   } catch (err) {
     console.error('Error processing user preference update:', err);
