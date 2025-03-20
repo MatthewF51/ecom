@@ -17,8 +17,9 @@ router.post('/signup', async (req, res) => {
       'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
       [name, email, hashedPassword]
     );
+	const hashedEmail = await bcrypt.hash(email, 10);
     req.session.user = result.rows[0];
-    res.redirect('/');
+    res.redirect(`/?user=${hashedEmail}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error during signup.');
@@ -38,8 +39,9 @@ router.post('/login', async (req, res) => {
     if (!valid) {
       return res.status(400).send('Invalid email or password.');
     }
+	const hashedEmail = await bcrypt.hash(email, 10);
     req.session.user = user;
-    res.redirect('/');
+    res.redirect(`/?user=${hashedEmail}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error during login.');
