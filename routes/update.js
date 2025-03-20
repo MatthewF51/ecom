@@ -8,8 +8,7 @@ console.log("Router file loaded!");  // Should show on server startup
 router.get('/', async (req, res) => {
   console.log("GET /update hit!");
 
-  // Extract query parameters (from URL)
-  const user = req.query.user; // e.g., /update?user=abc
+  const user = req.query.user;
   const carId = req.query.id;
   const type = req.query.type;
   const attributes = req.query.attributes;
@@ -31,18 +30,10 @@ router.get('/', async (req, res) => {
     for (let i = 0; i < result.rows.length; i++) {
       const check = result.rows[i].user;
 
-      // If user is an ID or username, compare normally:
       if (user === check) {
         userId = check;
         break;
       }
-
-      // If you intended password comparison:
-      // const valid = await bcrypt.compare(user, check);
-      // if (valid) {
-      //   userId = check;
-      //   break;
-      // }
     }
 
     if (userId === "") {
@@ -54,11 +45,13 @@ router.get('/', async (req, res) => {
       );
     }
 
-    res.json({ success: true, redirectTo: `/carDetails.html?user=${user}&id=${carId}` });
+    // ✅ Redirect user to car details page
+    res.redirect(`/carDetails.html?user=${user}&id=${carId}`);
   } catch (err) {
     console.error('Error processing update:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 module.exports = router;
