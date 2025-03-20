@@ -37,6 +37,7 @@ router.get('/:user/:carId/:type/:attributes', async (req, res) => {
 			);`,[result.email,carId,attributes,[1,1,1],type,[1]);
 			
 			if (upResult.rows.length === 0) {
+				console.error('Error updating');
 			  res.status(404).json({ error: 'Car not found' });
 			} else {
 			  res.json(upResult.rows[0]);
