@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
+console.log("Update");
 // Route: Fetch a single car by ID
 router.post('/', async (req, res) => {
   const { user, carId, type, attributes } = req.body;
