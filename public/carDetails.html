@@ -110,7 +110,6 @@
  
      async function loadCarDetails() {
 	        const urlParams = new URLSearchParams(window.location.search);
-		const user = urlParams.get('user');	
        const carId = urlParams.get('id');
        if (!carId) {
          document.getElementById('carSpecs').innerHTML = '<p>No car selected.</p>';
@@ -193,7 +192,7 @@
          if (car.available === true) {  // Ensure correct boolean check
            const buyBtn = document.createElement('button');
            buyBtn.textContent = "Buy Now";
-           buyBtn.onclick = () => window.location.href = `sales.html?user=${user}?id=${car.id}`;
+           buyBtn.onclick = () => window.location.href = `sales.html?user=${user}&id=${car.id}`;
            buySection.appendChild(buyBtn);
          } else {
            buySection.innerHTML = '<p>This car is currently unavailable for purchase.</p>';
