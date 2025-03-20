@@ -38,8 +38,9 @@ router.post('/login', async (req, res) => {
     if (!valid) {
       return res.status(400).send('Invalid email or password.');
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
     req.session.user = user;
-    res.redirect(`/?user=${user.name}`);
+    res.redirect(`/?user=${hashedPassword}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error during login.');
