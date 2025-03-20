@@ -36,6 +36,7 @@ app.use('/api/sales', salesRouter);
 const contactRouter = require('./routes/contact');
 app.use('/api/contact', contactRouter);
 
+const updateRouter =  require('./routes/update'); 
 app.get('/update', (req, res) => {
   console.log("GET /update hit!");
   
