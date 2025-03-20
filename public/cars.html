@@ -10,7 +10,7 @@
 </head>
 <body>
   <header class="navbar">
-  <h1>Speedy Sales</h1>
+    <h1>Speedy Sales</h1>
     <nav>
       <a href="index.html" id="home">Home</a>
       <a href="cars.html" id="cars">Cars</a>
@@ -68,7 +68,6 @@
 
   <section class="cars-page">
     <h2>Our Cars</h2>
-	
     <div id="carsContainer" class="car-grid"></div>
   </section>
 
@@ -79,69 +78,43 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init();
-	
-	
-    let allCars = []; // Store all cars for filtering
+
+    let allCars = [];
 
     function updateValue(val) {
       document.getElementById("rangeValue").textContent = 
         new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(val);
     }
-	
-	function getUser(){
-		
-		const urlParams = new URLSearchParams(window.location.search);
-		user = urlParams.get('user');
-		
-		let link = document.getElementById('home');
-		// Use URL to manage parameters
-		let url = new URL(link.href);
-		url.searchParams.set('user', user);
-		// Update the link
-		link.href = url.toString();
-		
-		 link = document.getElementById('cars');
-		// Use URL to manage parameters
-		 url = new URL(link.href);
-		url.searchParams.set('user', user);
-		// Update the link
-		link.href = url.toString();
-		
-		 link = document.getElementById('contact');
-		// Use URL to manage parameters
-		 url = new URL(link.href);
-		url.searchParams.set('user', user);
-		// Update the link
-		link.href = url.toString();
-		
-		 link = document.getElementById('about');
-		// Use URL to manage parameters
-		 url = new URL(link.href);
-		url.searchParams.set('user', user);
-		// Update the link
-		link.href = url.toString();
-		
-		 link = document.getElementById('login');
-		// Use URL to manage parameters
-		 url = new URL(link.href);
-		url.searchParams.set('user', user);
-		// Update the link
-		link.href = url.toString();
-		
-		 link = document.getElementById('sign');
-		// Use URL to manage parameters
-		 url = new URL(link.href);
-		url.searchParams.set('user', user);
-		// Update the link
-		link.href = url.toString();
-	}
+
+    function getUser() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const user = urlParams.get('user');
+
+      if (!user) {
+        alert("Please log in to access this page.");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const links = ['home', 'cars', 'about', 'contact', 'login', 'sign'];
+      links.forEach(id => {
+        const link = document.getElementById(id);
+        const url = new URL(link.href);
+        url.searchParams.set('user', user);
+        link.href = url.toString();
+      });
+
+      return user;
+    }
 
     async function fetchCars() {
-		getUser();
+      const user = getUser(); // Make sure user is available
+      if (!user) return; // Exit if no user
+      
       try {
         const response = await fetch("/api/cars");
         allCars = await response.json();
-        loadCars(allCars); // Load all cars initially
+        loadCars(allCars, user);
       } catch (error) {
         console.error('Error fetching cars:', error);
       }
@@ -152,63 +125,59 @@
 
       const form = document.getElementById('searchForm');
       const formData = new FormData(form);
-  
-      let selectedCarTypes = formData.getAll('car_type');
-      let selectedAttributes = formData.getAll('car_attribute');
-      let maxPrice = parseFloat(formData.get('price')) || 3000000;
 
-      // Filter logic
-      let filteredCars = allCars.filter(car => {
-        let matchesType = selectedCarTypes.includes("Any") || selectedCarTypes.includes(car.cartype);
-        let matchesAttributes = selectedAttributes.includes("Any") || selectedAttributes.every(attr => car.attributes.includes(attr));
-        let matchesPrice = car.price <= maxPrice;
+      const selectedCarTypes = formData.getAll('car_type');
+      const selectedAttributes = formData.getAll('car_attribute');
+      const maxPrice = parseFloat(formData.get('price')) || 3000000;
+
+      const filteredCars = allCars.filter(car => {
+        const matchesType = selectedCarTypes.includes("Any") || selectedCarTypes.includes(car.cartype);
+        const matchesAttributes = selectedAttributes.includes("Any") || selectedAttributes.every(attr => car.attributes.includes(attr));
+        const matchesPrice = car.price <= maxPrice;
 
         return matchesType && matchesAttributes && matchesPrice;
       });
 
-      loadCars(filteredCars);
+      const user = getUser();
+      loadCars(filteredCars, user);
     }
 
-    function loadCars(cars) {
-	  const container = document.getElementById('carsContainer');
-	  container.innerHTML = "";
-	
-	  if (cars.length === 0) {
-	    container.innerHTML = '<p>No cars available.</p>';
-	    return;
-	  }
-	  
-	  const urlParams = new URLSearchParams(window.location.search);
-		user = urlParams.get('user');
-	
-	  cars.forEach(car => {
-	    const card = document.createElement('div');
-	    card.className = 'car-card';
-	    card.innerHTML = `
-	      <img src="${car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg'}" alt="${car.name}" />
-	      <div class="car-info">
-	        <h4>${car.name}</h4>
-	        <p>${car.description}</p>
-			<form action="/update" method="GET>
-			<input type="hidden" name="user" value="${user}">
-			<input type="hidden" name="id" value="${car.id}">
-			<input type="hidden" name="type" value="${car.cartype}">
-   			
-			<input type="hidden" name="attributes" value="${car.attributes}">
-	        <button type="submit">
-	          View Details
-	        </button>
-			</form>
-	      </div>
-	    `;
-	    container.appendChild(card);
-	  });
-	
-	}
+    function loadCars(cars, user) {
+      const container = document.getElementById('carsContainer');
+      container.innerHTML = "";
 
+      if (cars.length === 0) {
+        container.innerHTML = '<p>No cars available.</p>';
+        return;
+      }
+
+      cars.forEach(car => {
+        const card = document.createElement('div');
+        card.className = 'car-card';
+
+        const attributesString = car.attributes.join(',');
+
+        card.innerHTML = `
+          <img src="${car.image_url ? 'images/' + car.image_url : 'images/default-car.jpg'}" alt="${car.name}" />
+          <div class="car-info">
+            <h4>${car.name}</h4>
+            <p>${car.description}</p>
+            <form action="/update" method="GET">
+              <input type="hidden" name="user" value="${user}">
+              <input type="hidden" name="id" value="${car.id}">
+              <input type="hidden" name="type" value="${car.cartype}">
+              <input type="hidden" name="attributes" value="${attributesString}">
+              <button type="submit">View Details</button>
+            </form>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
 
     document.getElementById('searchForm').addEventListener('submit', findCars);
-    window.addEventListener('DOMContentLoaded', fetchCars); // Fetch cars on page load
+    window.addEventListener('DOMContentLoaded', fetchCars);
   </script>
 </body>
 </html>
