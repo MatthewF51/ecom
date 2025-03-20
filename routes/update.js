@@ -6,7 +6,7 @@ const pool = require('../db');
 router.post('/insert', async (req, res) => {
   const { user, carId, type, attributes } = req.body;
 
-	res.redirect(`/carDetails.html?user=${user}&id=${carId}`);
+	res.redirect(`/?user=${user}&id=${carId}`);
 });
 
 module.exports = router;
