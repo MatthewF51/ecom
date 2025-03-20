@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt'); // <-- You missed this import
+const bcrypt = require('bcryptjs'); // <-- You missed this import
 const pool = require('../db');
 
 console.log("Update");
