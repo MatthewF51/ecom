@@ -199,7 +199,8 @@
 	      const carId = event.target.getAttribute('data-id');
 	      const carType = event.target.getAttribute('data-type');
 	      const carAttributes = JSON.parse(event.target.getAttribute('data-attributes'));
-		  
+		  const urlParams = new URLSearchParams(window.location.search);
+		  userId = urlParams.get('user');
 		  
 	      updatePreference(userId, carId, carType, carAttributes);
 	    });
