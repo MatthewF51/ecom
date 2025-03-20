@@ -216,7 +216,7 @@
 		user = urlParams.get('user');
 
 	  try {
-	        const response = await fetch(`/api/update/${user}/${carId}/${type}/${attributes}`);
+	        const response = await fetch(`/api/cars`);
 	        update = await response.json();
 	        console.log(update); // Load all cars initially
 	      } catch (error) {
