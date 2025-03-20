@@ -3,21 +3,18 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const pool = require('../db');
 
-console.log("Router file loaded!");  // This should show on server startup.
+console.log("Router file loaded!");  // Should show on server startup
 
 router.get('/', async (req, res) => {
-  console.log("GET /api/update hit!");
+  console.log("GET /update hit!");
 
-  const user = req.query.user;        // This will be undefined unless you pass ?user=...
-  const carId = req.query.id;         // You have id=4 in your URL
-  const type = req.query.type;        // type=Saloon
-  const attributes = req.query.attributes; // attributes=fast,luxurious,four-door,five-seater
+  // Extract query parameters (from URL)
+  const user = req.query.user; // e.g., /update?user=abc
+  const carId = req.query.id;
+  const type = req.query.type;
+  const attributes = req.query.attributes;
 
   console.log("Params:", { user, carId, type, attributes });
-
-
-  const { user, carId, type, attributes } = req.body;
-  console.log("Request body:", req.body);
 
   try {
     console.log("Before querying user_preferences");
@@ -33,12 +30,19 @@ router.get('/', async (req, res) => {
 
     for (let i = 0; i < result.rows.length; i++) {
       const check = result.rows[i].user;
-      const valid = await bcrypt.compare(user, check);
 
-      if (valid) {
+      // If user is an ID or username, compare normally:
+      if (user === check) {
         userId = check;
         break;
       }
+
+      // If you intended password comparison:
+      // const valid = await bcrypt.compare(user, check);
+      // if (valid) {
+      //   userId = check;
+      //   break;
+      // }
     }
 
     if (userId === "") {
@@ -52,7 +56,7 @@ router.get('/', async (req, res) => {
 
     res.json({ success: true, redirectTo: `/carDetails.html?user=${user}&id=${carId}` });
   } catch (err) {
-    console.error('Error fetching car details:', err);
+    console.error('Error processing update:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
