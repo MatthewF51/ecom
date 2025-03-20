@@ -1,4 +1,3 @@
-// server.js
 require('dotenv').config();
 
 const express = require('express');
@@ -26,7 +25,6 @@ app.use(express.static('public'));
 const authRouter = require('./routes/auth');
 app.use('/auth', authRouter);
 
-// Existing cars routes
 const carsRouter = require('./routes/cars');
 app.use('/api/cars', carsRouter);
 
@@ -36,14 +34,25 @@ app.use('/api/sales', salesRouter);
 const contactRouter = require('./routes/contact');
 app.use('/api/contact', contactRouter);
 
-const updateRouter =  require('./routes/update'); 
+// OPTION 1: Inline GET route for /update (quick test)
 app.get('/update', (req, res) => {
   console.log("GET /update hit!");
-  
+
   const { id: carId, type, attributes } = req.query;
 
   console.log({ carId, type, attributes });
+
+  res.json({
+    success: true,
+    carId,
+    type,
+    attributes
+  });
 });
+
+// OPTION 2 (Recommended): Use the router instead of inline route
+// const updateRouter = require('./routes/update');
+// app.use('/update', updateRouter);
 
 // Endpoint to fetch current user info (for autofilling contact page)
 app.get('/api/user', (req, res) => {
