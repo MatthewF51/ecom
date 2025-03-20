@@ -5,6 +5,7 @@ const pool = require('../db');
 console.log("Update");
 // Route: Fetch a single car by ID
 router.post('/', async (req, res) => {
+console.log("Update");
   const { user, carId, type, attributes } = req.body;
   try {
 	console.log("Before UP");
