@@ -7,7 +7,7 @@ console.log("Router file loaded!");
 router.get('/', async (req, res) => {
   console.log("GET /update hit!");
 
-  const userId = req.query.user;
+  const userId = parseInt(req.query.user);
   const carId = parseInt(req.query.id);
   const carType = req.query.type;
   const attributes = req.query.attributes ? req.query.attributes.split(",") : [];
