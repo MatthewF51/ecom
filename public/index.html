@@ -45,7 +45,17 @@
   <script>
     AOS.init();
 
+	function getUser(){
+		
+		const urlParams = new URLSearchParams(window.location.search);
+		return urlParams.get('user');
+     }
+
     async function loadFeaturedCars() {
+		const user = getUser();
+		if user {
+			alert(user);
+		}
       try {
         const response = await fetch('/api/cars');
         const cars = await response.json();
