@@ -68,6 +68,7 @@
 
   <section class="cars-page">
     <h2>Our Cars</h2>
+	
     <div id="carsContainer" class="car-grid"></div>
   </section>
 
@@ -176,6 +177,9 @@
 	    container.innerHTML = '<p>No cars available.</p>';
 	    return;
 	  }
+	  
+	  const urlParams = new URLSearchParams(window.location.search);
+		user = urlParams.get('user');
 	
 	  cars.forEach(car => {
 	    const card = document.createElement('div');
@@ -185,45 +189,20 @@
 	      <div class="car-info">
 	        <h4>${car.name}</h4>
 	        <p>${car.description}</p>
-	        <button data-id="${car.id}" data-type="${car.cartype}" data-attributes='${JSON.stringify(car.attributes)}' class="view-details">
+			<form action="/update/insert" id="update" method="POST>
+			<input type="hidden" name="type" value="${user}">
+			<input type="hidden" name="id" value="${car.id}">
+			<input type="hidden" name="type" value="${car.cartype}">
+			<input type="hidden" name="attributes" value="${car.attributes}">
+	        <button type="submit">
 	          View Details
 	        </button>
+			</form>
 	      </div>
 	    `;
 	    container.appendChild(card);
 	  });
 	
-	  // Attach event listeners
-	  document.querySelectorAll('.view-details').forEach(button => {
-	    button.addEventListener('click', (event) => {
-	      const carId = event.target.getAttribute('data-id');
-	      const carType = event.target.getAttribute('data-type');
-	      const carAttributes = JSON.parse(event.target.getAttribute('data-attributes'));
-		  const urlParams = new URLSearchParams(window.location.search);
-		  userId = urlParams.get('user');
-		  
-	      updatePreference(userId, carId, carType, carAttributes);
-	    });
-	  });
-	}
-
-	
-	async function updatePreference(userId,carId, type, attributes) {
-	  console.log("Car ID:", carId);
-	  console.log("Car Type:", type);
-	  console.log("Attributes:", attributes);
-	  const urlParams = new URLSearchParams(window.location.search);
-		user = urlParams.get('user');
-
-	  try {
-	        const response = await fetch(`/api/update/${user}`);
-	        update = await response.json();
-	        console.log(update); // Load all cars initially
-	      } catch (error) {
-	        console.error('Error fetching cars:', error);
-	      }
-
-	    //window.location.href = `carDetails.html?user=${user}&id=${carId}`;
 	}
 
 

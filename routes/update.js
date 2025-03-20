@@ -3,10 +3,10 @@ const router = express.Router();
 const pool = require('../db');
 
 // Route: Fetch a single car by ID
-router.get('/:user', async (req, res) => {
+router.post('/insert', async (req, res) => {
+  const { user, carId, type, attributes } = req.body;
   try {
 	   
-	  const { user } = req.params;
     const result = await pool.query(`SELECT email FROM users`);
 	
 			if (result.rows.length === 0) {
@@ -16,6 +16,7 @@ router.get('/:user', async (req, res) => {
 			  res.json(upResult.rows[0]);
 			}
 		}
+	res.redirect(`/carDetails.html?user=${hashedEmail}&id=${carId}`);
   } catch (err) {
     console.error('Error fetching car details:', err);
     res.status(500).json({ error: 'Internal server error' });
