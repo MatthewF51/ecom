@@ -17,9 +17,9 @@ router.post('/signup', async (req, res) => {
       'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
       [name, email, hashedPassword]
     );
-	const hashedEmail = await bcrypt.hash(email, 10);
+	
     req.session.user = result.rows[0];
-    res.redirect(`/?user=${hashedEmail}`);
+    res.redirect(`/?user=${result.id}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error during signup.');
