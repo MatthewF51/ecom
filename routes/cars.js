@@ -35,7 +35,10 @@ router.get('/recommend', async (req, res) => {
   try {
     const userId = parseInt(req.query.userId);
 
+    console.log("➡️ Received /recommend request for userId:", userId);
+
     if (isNaN(userId)) {
+      console.error("❌ userId is missing or invalid:", req.query.userId);
       return res.status(400).json({ error: 'Missing or invalid userId' });
     }
 
@@ -47,52 +50,84 @@ router.get('/recommend', async (req, res) => {
     `, [userId]);
 
     if (userPrefsResult.rows.length === 0) {
+      console.warn("❗ No user preferences found for userId:", userId);
       return res.status(404).json({ error: 'User preferences not found' });
     }
 
     const prefs = userPrefsResult.rows[0];
 
-    // Extract user preferences
-    const preferredCarTypes = prefs.preferred_car_types;
-    const carTypeRatings = prefs.car_type_ratings;
-    const viewedAttributes = prefs.viewed_attributes;
-    const attributeRatings = prefs.attribute_ratings;
+    // Extract user preferences with defaults
+    const preferredCarTypes = prefs.preferred_car_types || [];
+    const carTypeRatings = prefs.car_type_ratings || [];
+    const viewedAttributes = prefs.viewed_attributes || [];
+    const attributeRatings = prefs.attribute_ratings || [];
 
-    console.log("User preferences loaded:", {
+    console.log("✅ User preferences loaded:", {
       preferredCarTypes,
       carTypeRatings,
       viewedAttributes,
       attributeRatings
     });
 
+    // Validation to ensure lengths match
+    if (preferredCarTypes.length !== carTypeRatings.length) {
+      console.error("❌ Car type arrays mismatched lengths!", {
+        preferredCarTypesLength: preferredCarTypes.length,
+        carTypeRatingsLength: carTypeRatings.length
+      });
+      return res.status(500).json({ error: 'Internal server error: Car type preferences invalid' });
+    }
+
+    if (viewedAttributes.length !== attributeRatings.length) {
+      console.error("❌ Attribute arrays mismatched lengths!", {
+        viewedAttributesLength: viewedAttributes.length,
+        attributeRatingsLength: attributeRatings.length
+      });
+      return res.status(500).json({ error: 'Internal server error: Attribute preferences invalid' });
+    }
+
     // Fetch all cars
     const carsResult = await pool.query(`SELECT * FROM cars`);
-    let cars = carsResult.rows;
+    const cars = carsResult.rows;
 
-    console.log("Total cars fetched:", cars.length);
+    console.log(`✅ Fetched ${cars.length} cars from database`);
 
     // Rank each car by score based on type & attributes
     const scoredCars = cars.map(car => {
       let score = 0;
 
+      const carType = car.cartype;
+      const carAttributes = car.attributes || [];
+
+      // Debugging for this car
+      console.log("🔍 Scoring car:", {
+        carId: car.id,
+        carType,
+        carAttributes
+      });
+
       // Check car type rating
-      const typeIndex = preferredCarTypes.indexOf(car.cartype);
+      const typeIndex = preferredCarTypes.indexOf(carType);
       if (typeIndex >= 0) {
-        score += carTypeRatings[typeIndex];
+        const typeScore = carTypeRatings[typeIndex];
+        console.log(`✅ Car type match found! Type: ${carType} Score: ${typeScore}`);
+        score += typeScore;
       }
 
       // Sum attribute ratings for matching attributes
-      const carAttributes = car.attributes || [];
       let attributeScore = 0;
-
       carAttributes.forEach(attr => {
         const attrIndex = viewedAttributes.indexOf(attr);
         if (attrIndex >= 0) {
-          attributeScore += attributeRatings[attrIndex];
+          const attrRating = attributeRatings[attrIndex];
+          console.log(`✅ Attribute match found! Attribute: ${attr} Score: ${attrRating}`);
+          attributeScore += attrRating;
         }
       });
 
       score += attributeScore;
+
+      console.log(`✅ Final score for car ${car.id}: ${score}`);
 
       return {
         ...car,
@@ -103,16 +138,12 @@ router.get('/recommend', async (req, res) => {
     // Sort by preference score descending
     scoredCars.sort((a, b) => b.preferenceScore - a.preferenceScore);
 
-    console.log("Top cars after scoring:", scoredCars.slice(0, 5));
-
-    if (scoredCars.length === 0) {
-      return res.status(404).json({ error: 'No cars found for user preferences' });
-    }
+    console.log("✅ Top cars after scoring:", scoredCars.slice(0, 5));
 
     res.json(scoredCars);
 
   } catch (err) {
-    console.error('Error executing recommendation filtering:', err);
+    console.error('🔥 Error executing recommendation filtering:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
