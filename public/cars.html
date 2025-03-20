@@ -79,12 +79,7 @@
   <script>
     AOS.init();
 	
-	document.getElementById('home').addEventListener('click', go('index'));
 	
-	function go(where){
-		window.location.href = `${where}.html?user=${user}`;
-	}
-    
     let allCars = []; // Store all cars for filtering
 
     function updateValue(val) {
@@ -95,11 +90,17 @@
 	function getUser(){
 		
 		const urlParams = new URLSearchParams(window.location.search);
-		return urlParams.get('user');
+		user = urlParams.get('user');
+		const link = document.getElementById('home');
+		// Use URL to manage parameters
+		const url = new URL(link.href);
+		url.searchParams.set('user', user);
+		// Update the link
+		link.href = url.toString();
      }
 
     async function fetchCars() {
-		const user = getUser();
+		getUser();
       try {
         const response = await fetch("/api/cars");
         allCars = await response.json();
